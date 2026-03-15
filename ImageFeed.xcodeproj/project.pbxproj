@@ -30,24 +30,36 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		820D395C2F61FD590089553D /* Exceptions for "ImageFeed" folder in "ImageFeed" target */ = {
+		823828C02F6738F1000BA655 /* Exceptions for "ImageFeed" folder in "ImageFeed" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				"/Localized: LaunchScreen.storyboard",
+				"/Localized: Main.storyboard",
+				AppDelegate.swift,
+				Assets.xcassets,
+				ImagesList/ImagesListCell.swift,
+				ImagesList/ImagesListViewController.swift,
+				SceneDelegate.swift,
 			);
 			target = 820D39332F61FD570089553D /* ImageFeed */;
+		};
+		823828C12F6738F1000BA655 /* Exceptions for "ImageFeed" folder in "ImageFeedUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: LaunchScreen.storyboard",
+				"/Localized: Main.storyboard",
+				AppDelegate.swift,
+				Assets.xcassets,
+				ImagesList/ImagesListCell.swift,
+				ImagesList/ImagesListViewController.swift,
+				Info.plist,
+				SceneDelegate.swift,
+			);
+			target = 820D39532F61FD590089553D /* ImageFeedUITests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		820D39362F61FD570089553D /* ImageFeed */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				820D395C2F61FD590089553D /* Exceptions for "ImageFeed" folder in "ImageFeed" target */,
-			);
-			path = ImageFeed;
-			sourceTree = "<group>";
-		};
 		820D394D2F61FD590089553D /* ImageFeedTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ImageFeedTests;
@@ -56,6 +68,15 @@
 		820D39572F61FD590089553D /* ImageFeedUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ImageFeedUITests;
+			sourceTree = "<group>";
+		};
+		823828B82F6738F1000BA655 /* ImageFeed */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				823828C02F6738F1000BA655 /* Exceptions for "ImageFeed" folder in "ImageFeed" target */,
+				823828C12F6738F1000BA655 /* Exceptions for "ImageFeed" folder in "ImageFeedUITests" target */,
+			);
+			path = ImageFeed;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -88,7 +109,7 @@
 		820D392B2F61FD570089553D = {
 			isa = PBXGroup;
 			children = (
-				820D39362F61FD570089553D /* ImageFeed */,
+				823828B82F6738F1000BA655 /* ImageFeed */,
 				820D394D2F61FD590089553D /* ImageFeedTests */,
 				820D39572F61FD590089553D /* ImageFeedUITests */,
 				820D39352F61FD570089553D /* Products */,
@@ -119,9 +140,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				820D39362F61FD570089553D /* ImageFeed */,
 			);
 			name = ImageFeed;
 			packageProductDependencies = (
@@ -168,6 +186,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				820D39572F61FD590089553D /* ImageFeedUITests */,
+				823828B82F6738F1000BA655 /* ImageFeed */,
 			);
 			name = ImageFeedUITests;
 			packageProductDependencies = (
@@ -297,6 +316,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -305,12 +325,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "ru.yandex.practicumLeo-iOS.ImageFeed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -329,6 +351,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -337,12 +360,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "ru.yandex.practicumLeo-iOS.ImageFeed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
