@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
     
     @IBOutlet private var tableView: UITableView!
     
@@ -34,7 +34,7 @@ class ImagesListViewController: UIViewController {
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photosName.count
+        photosName.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -52,17 +52,17 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath : IndexPath) {
-       
+        
         
         guard let image = UIImage(named: photosName[indexPath.row]) else {
             return
         }
         cell.cellImage.image = image
-        cell.dateLable.text = dateFormatter.string(from: Date())
+        cell.dateLabel.text = dateFormatter.string(from: Date())
         
         let isLiked = indexPath.row % 2 == 0
-        let likeImageName = isLiked ? "likeEnable" : "likeDisable"
-        cell.likeButton.setImage(UIImage(named: likeImageName), for: .normal)
+        let likeImageResource: ImageResource = isLiked ? .likeEnable : .likeDisable
+        cell.likeButton.setImage(UIImage(resource: likeImageResource), for: .normal)
     }
 }
 

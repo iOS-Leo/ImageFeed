@@ -36,7 +36,7 @@
                                                         <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="15 марта 2025" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vbb-CM-Mw6" userLabel="Date Lable">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="15 марта 2025" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vbb-CM-Mw6" userLabel="Date Label">
                                                     <rect key="frame" x="24" y="172" width="91" height="16"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" name="YP White (iOS)"/>
@@ -68,7 +68,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="cellImage" destination="zqk-fe-XDf" id="rtC-NH-5e5"/>
-                                            <outlet property="dateLable" destination="vbb-CM-Mw6" id="j9w-qS-anb"/>
+                                            <outlet property="dateLabel" destination="vbb-CM-Mw6" id="AWl-UU-b1G"/>
                                             <outlet property="likeButton" destination="U0a-hM-5Lk" id="IIj-hT-Ipp"/>
                                         </connections>
                                     </tableViewCell>
