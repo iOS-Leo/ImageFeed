@@ -106,7 +106,7 @@
                             <constraint firstItem="MeZ-cE-KTV" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="lZa-TE-aTa"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item" image="tab_editorial_active" id="Rw0-Wy-8xX"/>
+                    <tabBarItem key="tabBarItem" title="" image="tab_editorial_active" id="Rw0-Wy-8xX"/>
                     <connections>
                         <outlet property="tableView" destination="MeZ-cE-KTV" id="cke-iQ-NgD"/>
                         <segue destination="NcE-P5-w2r" kind="presentation" identifier="ShowSingleImage" id="lIx-gm-gZ2"/>

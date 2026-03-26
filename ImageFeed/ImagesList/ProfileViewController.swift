@@ -1,13 +1,13 @@
 import UIKit
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
     
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.image=UIImage(named: "PhotoProfile")
+        imageView.image = UIImage(resource: .photoProfile)
         return imageView
     }()
     
@@ -43,6 +43,8 @@ class ProfileViewController: UIViewController {
         let image = UIImage(named: "ExitButton")
         button.tintColor = .ypRedIOS
         button.setImage(image, for: .normal)
+        button.contentHorizontalAlignment = .fill
+        button.contentVerticalAlignment = .fill
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()

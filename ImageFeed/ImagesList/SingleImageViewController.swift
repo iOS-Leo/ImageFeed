@@ -13,17 +13,15 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet private var imageView: UIImageView!
     
     
-    @IBAction func didTapShareButton(_ sender: Any) {
+    @IBAction private func didTapShareButton(_ sender: Any) {
         guard let image = image else { return }
-            
-            
-            let shareController = UIActivityViewController(
-                activityItems: [image],
-                applicationActivities: nil
-            )
-            
-            
-            present(shareController, animated: true, completion: nil)
+        
+        let shareController = UIActivityViewController(
+            activityItems: [image],
+            applicationActivities: nil
+        )
+        
+        present(shareController, animated: true, completion: nil)
         
     }
     
@@ -39,7 +37,7 @@ final class SingleImageViewController: UIViewController {
         
         scrollView.delegate = self
         
-        guard let image = image else { return }
+        guard let image else { return }
         
         imageView.image = image
         imageView.frame.size = image.size
