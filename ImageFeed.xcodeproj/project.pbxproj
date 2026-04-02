@@ -39,6 +39,8 @@
 				Assets.xcassets,
 				ImagesList/ImagesListCell.swift,
 				ImagesList/ImagesListViewController.swift,
+				ImagesList/ProfileViewController.swift,
+				ImagesList/SingleImageViewController.swift,
 				SceneDelegate.swift,
 			);
 			target = 820D39332F61FD570089553D /* ImageFeed */;
@@ -52,6 +54,8 @@
 				Assets.xcassets,
 				ImagesList/ImagesListCell.swift,
 				ImagesList/ImagesListViewController.swift,
+				ImagesList/ProfileViewController.swift,
+				ImagesList/SingleImageViewController.swift,
 				Info.plist,
 				SceneDelegate.swift,
 			);
