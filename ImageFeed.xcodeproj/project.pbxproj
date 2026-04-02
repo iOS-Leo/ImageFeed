@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		823218B62F7DB30D00E1AE10 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 823218B52F7DB30D00E1AE10 /* AuthViewController.swift */; };
+		823219222F7DB55C00E1AE10 /* WebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 823219212F7DB55C00E1AE10 /* WebViewViewController.swift */; };
+		823219252F7DBA2C00E1AE10 /* OAuth2Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 823219242F7DBA2C00E1AE10 /* OAuth2Service.swift */; };
+		823219272F7DBA4600E1AE10 /* OAuth2TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 823219262F7DBA4600E1AE10 /* OAuth2TokenStorage.swift */; };
+		823219292F7DBA6100E1AE10 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 823219282F7DBA6100E1AE10 /* SplashViewController.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		820D394B2F61FD590089553D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,16 +35,30 @@
 		820D39342F61FD570089553D /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		820D394A2F61FD590089553D /* ImageFeedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageFeedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		820D39542F61FD590089553D /* ImageFeedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageFeedUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		823218B52F7DB30D00E1AE10 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
+		823219212F7DB55C00E1AE10 /* WebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewController.swift; sourceTree = "<group>"; };
+		823219242F7DBA2C00E1AE10 /* OAuth2Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2Service.swift; sourceTree = "<group>"; };
+		823219262F7DBA4600E1AE10 /* OAuth2TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2TokenStorage.swift; sourceTree = "<group>"; };
+		823219282F7DBA6100E1AE10 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		823828C02F6738F1000BA655 /* Exceptions for "ImageFeed" folder in "ImageFeed" target */ = {
+		823218CF2F7DB47100E1AE10 /* Exceptions for "ImageFeedUITests" folder in "ImageFeedUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ImageFeedUITests.swift,
+				ImageFeedUITestsLaunchTests.swift,
+			);
+			target = 820D39532F61FD590089553D /* ImageFeedUITests */;
+		};
+		8232191C2F7DB50600E1AE10 /* Exceptions for "ImageFeed" folder in "ImageFeed" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"/Localized: LaunchScreen.storyboard",
 				"/Localized: Main.storyboard",
 				AppDelegate.swift,
 				Assets.xcassets,
+				ImagesList/Constants.swift,
 				ImagesList/ImagesListCell.swift,
 				ImagesList/ImagesListViewController.swift,
 				ImagesList/ProfileViewController.swift,
@@ -45,13 +67,31 @@
 			);
 			target = 820D39332F61FD570089553D /* ImageFeed */;
 		};
-		823828C12F6738F1000BA655 /* Exceptions for "ImageFeed" folder in "ImageFeedUITests" target */ = {
+		8232191D2F7DB50600E1AE10 /* Exceptions for "ImageFeed" folder in "ImageFeedTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"/Localized: LaunchScreen.storyboard",
 				"/Localized: Main.storyboard",
 				AppDelegate.swift,
 				Assets.xcassets,
+				ImagesList/Constants.swift,
+				ImagesList/ImagesListCell.swift,
+				ImagesList/ImagesListViewController.swift,
+				ImagesList/ProfileViewController.swift,
+				ImagesList/SingleImageViewController.swift,
+				Info.plist,
+				SceneDelegate.swift,
+			);
+			target = 820D39492F61FD590089553D /* ImageFeedTests */;
+		};
+		8232191E2F7DB50600E1AE10 /* Exceptions for "ImageFeed" folder in "ImageFeedUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: LaunchScreen.storyboard",
+				"/Localized: Main.storyboard",
+				AppDelegate.swift,
+				Assets.xcassets,
+				ImagesList/Constants.swift,
 				ImagesList/ImagesListCell.swift,
 				ImagesList/ImagesListViewController.swift,
 				ImagesList/ProfileViewController.swift,
@@ -64,21 +104,25 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		820D394D2F61FD590089553D /* ImageFeedTests */ = {
+		823218CB2F7DB47100E1AE10 /* ImageFeedUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				823218CF2F7DB47100E1AE10 /* Exceptions for "ImageFeedUITests" folder in "ImageFeedUITests" target */,
+			);
+			path = ImageFeedUITests;
+			sourceTree = "<group>";
+		};
+		823218D62F7DB4FB00E1AE10 /* ImageFeedTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ImageFeedTests;
 			sourceTree = "<group>";
 		};
-		820D39572F61FD590089553D /* ImageFeedUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ImageFeedUITests;
-			sourceTree = "<group>";
-		};
-		823828B82F6738F1000BA655 /* ImageFeed */ = {
+		823219082F7DB50600E1AE10 /* ImageFeed */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				823828C02F6738F1000BA655 /* Exceptions for "ImageFeed" folder in "ImageFeed" target */,
-				823828C12F6738F1000BA655 /* Exceptions for "ImageFeed" folder in "ImageFeedUITests" target */,
+				8232191C2F7DB50600E1AE10 /* Exceptions for "ImageFeed" folder in "ImageFeed" target */,
+				8232191D2F7DB50600E1AE10 /* Exceptions for "ImageFeed" folder in "ImageFeedTests" target */,
+				8232191E2F7DB50600E1AE10 /* Exceptions for "ImageFeed" folder in "ImageFeedUITests" target */,
 			);
 			path = ImageFeed;
 			sourceTree = "<group>";
@@ -113,9 +157,10 @@
 		820D392B2F61FD570089553D = {
 			isa = PBXGroup;
 			children = (
-				823828B82F6738F1000BA655 /* ImageFeed */,
-				820D394D2F61FD590089553D /* ImageFeedTests */,
-				820D39572F61FD590089553D /* ImageFeedUITests */,
+				823218B42F7DB2EC00E1AE10 /* Auth */,
+				823219082F7DB50600E1AE10 /* ImageFeed */,
+				823218D62F7DB4FB00E1AE10 /* ImageFeedTests */,
+				823218CB2F7DB47100E1AE10 /* ImageFeedUITests */,
 				820D39352F61FD570089553D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -128,6 +173,18 @@
 				820D39542F61FD590089553D /* ImageFeedUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		823218B42F7DB2EC00E1AE10 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				823218B52F7DB30D00E1AE10 /* AuthViewController.swift */,
+				823219212F7DB55C00E1AE10 /* WebViewViewController.swift */,
+				823219242F7DBA2C00E1AE10 /* OAuth2Service.swift */,
+				823219262F7DBA4600E1AE10 /* OAuth2TokenStorage.swift */,
+				823219282F7DBA6100E1AE10 /* SplashViewController.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -166,7 +223,9 @@
 				820D394C2F61FD590089553D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				820D394D2F61FD590089553D /* ImageFeedTests */,
+				823218CB2F7DB47100E1AE10 /* ImageFeedUITests */,
+				823218D62F7DB4FB00E1AE10 /* ImageFeedTests */,
+				823219082F7DB50600E1AE10 /* ImageFeed */,
 			);
 			name = ImageFeedTests;
 			packageProductDependencies = (
@@ -187,10 +246,6 @@
 			);
 			dependencies = (
 				820D39562F61FD590089553D /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				820D39572F61FD590089553D /* ImageFeedUITests */,
-				823828B82F6738F1000BA655 /* ImageFeed */,
 			);
 			name = ImageFeedUITests;
 			packageProductDependencies = (
@@ -272,6 +327,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				823219252F7DBA2C00E1AE10 /* OAuth2Service.swift in Sources */,
+				823219222F7DB55C00E1AE10 /* WebViewViewController.swift in Sources */,
+				823218B62F7DB30D00E1AE10 /* AuthViewController.swift in Sources */,
+				823219272F7DBA4600E1AE10 /* OAuth2TokenStorage.swift in Sources */,
+				823219292F7DBA6100E1AE10 /* SplashViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
