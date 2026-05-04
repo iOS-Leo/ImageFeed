@@ -42,9 +42,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         didAuthenticateWithCode code: String
     ) {
         
-        
         vc.dismiss(animated: true)
-        
         oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
             guard let self = self else { return }
             
@@ -53,11 +51,8 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 case .success(let token):
                     UserDefaults.standard.set(token, forKey: "access_token")
                     self.delegate?.didAuthenticate(self)
-                    
                 case .failure(let error):
-                    
                     self.showErrorAlert(error: error)
-                    
                 }
             }
         }
