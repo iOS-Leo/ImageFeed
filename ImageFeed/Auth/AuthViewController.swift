@@ -48,21 +48,21 @@ extension AuthViewController: WebViewViewControllerDelegate {
         oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             guard let self = self else { return }
-                switch result {
-                case .success(let token):
-                    UserDefaults.standard.set(token, forKey: "access_token")
-                    self.delegate?.didAuthenticate(self)
-                case .failure(let error):
-                    self.showErrorAlert(error: error)
-                
+            switch result {
+            case .success(let token):
+                OAuth2TokenStorage.shared.token = token
+                self.delegate?.didAuthenticate(self)
+            case .failure(let error):
+                print("[AuthViewController]: OAuth2 Error - \(error.localizedDescription)")
+                self.showErrorAlert(error: error)
             }
         }
     }
     
     private func showErrorAlert(error: Error) {
         let alert = UIAlertController(
-            title: "Ошибка авторизации",
-            message: error.localizedDescription,
+            title: "Что-то пошло не так",
+            message: "Не удалось войти в систему",
             preferredStyle: .alert
         )
         
