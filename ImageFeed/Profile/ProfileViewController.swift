@@ -1,8 +1,10 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
     private var profileImageServiceObserver: NSObjectProtocol?
+    
     
     
     private lazy var avatarImageView: UIImageView = {
@@ -79,7 +81,13 @@ final class ProfileViewController: UIViewController {
                 let profileImageURL = ProfileImageService.shared.avatarURL,
                 let url = URL(string: profileImageURL)
             else { return }
-            // TODO [Sprint 11] Обновить аватар, используя Kingfisher
+        avatarImageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "photoProfile"),
+                options: [
+                    .processor(RoundCornerImageProcessor(cornerRadius: 35)),
+                ]
+            )
         }
     
     private func updateProfileDetails(profile: ProfileService.Profile) {
