@@ -64,6 +64,7 @@
 				ServiceAccessLayer/OAuth2TokenStorage.swift,
 				SingleImage/SingleImageViewController.swift,
 				SplashView/SplashViewController.swift,
+				TabBarController.swift,
 				UIBlockingProgressHUD/UIBlockingProgressHUD.swift,
 			);
 			target = 820D39332F61FD570089553D /* ImageFeed */;
@@ -89,6 +90,7 @@
 				ServiceAccessLayer/OAuth2TokenStorage.swift,
 				SingleImage/SingleImageViewController.swift,
 				SplashView/SplashViewController.swift,
+				TabBarController.swift,
 			);
 			target = 820D39492F61FD590089553D /* ImageFeedTests */;
 		};
@@ -108,6 +110,7 @@
 				Profile/ProfileViewController.swift,
 				SceneDelegate.swift,
 				SingleImage/SingleImageViewController.swift,
+				TabBarController.swift,
 			);
 			target = 820D39532F61FD590089553D /* ImageFeedUITests */;
 		};
