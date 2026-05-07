@@ -7,22 +7,60 @@ protocol AuthViewControllerDelegate: AnyObject {
 
 final class AuthViewController: UIViewController {
     
-    private let showWebViewSegueIdentifier = "ShowWebView"
     private let oauth2Service = OAuth2Service.shared
     
     weak var delegate: AuthViewControllerDelegate?
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureBackButton()
+    private let logoImageView: UIImageView = {
+            let imageView = UIImageView()
+            imageView.image = UIImage(named: "auth_screen_logo")
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            return imageView
+        }()
+    
+    private lazy var loginButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.backgroundColor = .ypWhiteIOS
+        button.setTitle("Войти", for: .normal)
+        button.setTitleColor(.ypBlackIOS, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    @objc private func didTapLoginButton() {
+        let webViewViewController = WebViewViewController()
+        webViewViewController.delegate = self
+        webViewViewController.modalPresentationStyle = .fullScreen
+        present(webViewViewController, animated: true)
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showWebViewSegueIdentifier {
-            if let webViewVC = segue.destination as? WebViewViewController {
-                webViewVC.delegate = self
-            }
+    private func setupUI() {
+            
+            view.addSubview(logoImageView)
+            view.addSubview(loginButton)
+            
+            NSLayoutConstraint.activate([
+                logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                logoImageView.widthAnchor.constraint(equalToConstant: 60),
+                logoImageView.heightAnchor.constraint(equalToConstant: 60),
+      
+                loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                loginButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -90),
+                loginButton.heightAnchor.constraint(equalToConstant: 48)
+            ])
         }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .ypBlackIOS
+        configureBackButton()
+        setupUI()
     }
     
     private func configureBackButton() {

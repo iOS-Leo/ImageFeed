@@ -45,11 +45,9 @@ final class OAuth2Service {
                 print("[OAuth2Service]: Error - \(error.localizedDescription)")
                 completion(.failure(error))
             }
-            
             self.task = nil
             self.lastCode = nil
         }
-        
         self.task = task
         task.resume()
     }
@@ -59,7 +57,6 @@ final class OAuth2Service {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
             return nil
         }
-        
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "client_secret", value: Constants.secretKey),
@@ -71,13 +68,10 @@ final class OAuth2Service {
         guard let authTokenUrl = urlComponents.url else {
             return nil
         }
-        
         var request = URLRequest(url: authTokenUrl)
         request.httpMethod = "POST"
         return request
     }
-    
-    
     
     struct OAuthTokenResponse: Decodable {
         let accessToken: String
@@ -104,7 +98,6 @@ extension URLSession {
                 completion(result)
             }
         }
-        
         let task = dataTask(with: request, completionHandler: { data, response, error in
             if let data = data, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
                 if 200 ..< 300 ~= statusCode {
@@ -124,7 +117,6 @@ extension URLSession {
         
         return task
     }
-    
     func objectTask<T: Decodable>(
         for request: URLRequest,
         completion: @escaping (Result<T, Error>) -> Void

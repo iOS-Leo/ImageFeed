@@ -56,6 +56,7 @@
 				Helpers/Constants.swift,
 				ImagesList/ImagesListCell.swift,
 				ImagesList/ImagesListViewController.swift,
+				ImagesList/TabBarController.swift,
 				Profile/ProfileImageService.swift,
 				Profile/ProfileService.swift,
 				Profile/ProfileViewController.swift,
@@ -64,7 +65,6 @@
 				ServiceAccessLayer/OAuth2TokenStorage.swift,
 				SingleImage/SingleImageViewController.swift,
 				SplashView/SplashViewController.swift,
-				TabBarController.swift,
 				UIBlockingProgressHUD/UIBlockingProgressHUD.swift,
 			);
 			target = 820D39332F61FD570089553D /* ImageFeed */;
@@ -81,6 +81,7 @@
 				Helpers/Constants.swift,
 				ImagesList/ImagesListCell.swift,
 				ImagesList/ImagesListViewController.swift,
+				ImagesList/TabBarController.swift,
 				Info.plist,
 				Profile/ProfileImageService.swift,
 				Profile/ProfileService.swift,
@@ -90,7 +91,6 @@
 				ServiceAccessLayer/OAuth2TokenStorage.swift,
 				SingleImage/SingleImageViewController.swift,
 				SplashView/SplashViewController.swift,
-				TabBarController.swift,
 			);
 			target = 820D39492F61FD590089553D /* ImageFeedTests */;
 		};
@@ -104,13 +104,13 @@
 				Helpers/Constants.swift,
 				ImagesList/ImagesListCell.swift,
 				ImagesList/ImagesListViewController.swift,
+				ImagesList/TabBarController.swift,
 				Info.plist,
 				Profile/ProfileImageService.swift,
 				Profile/ProfileService.swift,
 				Profile/ProfileViewController.swift,
 				SceneDelegate.swift,
 				SingleImage/SingleImageViewController.swift,
-				TabBarController.swift,
 			);
 			target = 820D39532F61FD590089553D /* ImageFeedUITests */;
 		};

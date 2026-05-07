@@ -37,17 +37,14 @@ final class SplashViewController: UIViewController {
         }
     
     private func showAuthController() {
-            let storyboard = UIStoryboard(name: "Main", bundle: .main)
-            
-        guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
-            assertionFailure("Не удалось найти AuthViewController по идентификатору")
-            return
-        }
-            authViewController.delegate = self
-            authViewController.modalPresentationStyle = .fullScreen
-            
-            present(authViewController, animated: true)
-        }
+        let authViewController = AuthViewController()
+        let navigationController = UINavigationController(rootViewController: authViewController)
+        
+        navigationController.modalPresentationStyle = .fullScreen
+        authViewController.delegate = self
+        
+        present(navigationController, animated: true)
+    }
     
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else { return }
@@ -80,7 +77,6 @@ extension SplashViewController {
     
     func fetchProfile(_ token: String) {
         UIBlockingProgressHUD.show()
-        
         
         ProfileService.shared.fetchProfile(token) { [weak self] result in
             guard let self = self else { return }

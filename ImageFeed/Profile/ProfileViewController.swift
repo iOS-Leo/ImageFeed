@@ -4,9 +4,6 @@ import Kingfisher
 final class ProfileViewController: UIViewController {
     
     private var profileImageServiceObserver: NSObjectProtocol?
-    
-    
-    
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -133,7 +130,7 @@ final class ProfileViewController: UIViewController {
         
     }
     @objc private func logoutTapped() {
-        //
+        logoutButton.addTarget(self, action: #selector(logoutTapped), for: .touchUpInside)
     }
     
 }

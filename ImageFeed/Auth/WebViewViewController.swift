@@ -8,8 +8,28 @@ protocol WebViewViewControllerDelegate: AnyObject {
 
 final class WebViewViewController: UIViewController {
     
-    @IBOutlet weak var progressView: UIProgressView!
-    @IBOutlet private var webView: WKWebView!
+    private lazy var webView: WKWebView = {
+        let webView = WKWebView()
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.backgroundColor = .ypWhiteIOS // Или .white
+        return webView
+    }()
+    
+    private lazy var progressView: UIProgressView = {
+        let progress = UIProgressView(progressViewStyle: .default)
+        progress.progressTintColor = .ypBlackIOS
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        return progress
+    }()
+    
+    private lazy var backButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: "nav_back_button"), for: .normal) // Проверь имя в Assets
+        button.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     
     weak var delegate: WebViewViewControllerDelegate?
     private var estimatedProgressObservation: NSKeyValueObservation?
@@ -18,6 +38,9 @@ final class WebViewViewController: UIViewController {
         super.viewDidLoad()
         loadAuthView()
         webView.navigationDelegate = self
+        setupUI()
+        setupConstraints()
+
         
         estimatedProgressObservation = webView.observe(
                     \.estimatedProgress,
@@ -26,6 +49,34 @@ final class WebViewViewController: UIViewController {
                          guard let self = self else { return }
                          self.updateProgress()})
     }
+    
+    private func setupUI() {
+        view.addSubview(webView)
+        view.addSubview(progressView)
+        view.addSubview(backButton)
+    }
+
+    private func setupConstraints() {
+            NSLayoutConstraint.activate([
+                webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+                progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                progressView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+              
+                backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+                backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+                backButton.widthAnchor.constraint(equalToConstant: 44),
+                backButton.heightAnchor.constraint(equalToConstant: 44)
+            ])
+        }
+        
+        @objc private func didTapBackButton() {
+            delegate?.webViewViewControllerDidCancel(self)
+        }
     
     private func updateProgress() {
             progressView.progress = Float(webView.estimatedProgress)
