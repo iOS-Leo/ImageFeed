@@ -24,7 +24,7 @@ final class WebViewViewController: UIViewController {
     
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "nav_back_button"), for: .normal) // Проверь имя в Assets
+        button.setImage(UIImage(named: "nav_back_button"), for: .normal)
         button.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
