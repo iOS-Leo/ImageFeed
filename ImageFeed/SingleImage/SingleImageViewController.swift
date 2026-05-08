@@ -9,13 +9,14 @@ final class SingleImageViewController: UIViewController {
         }
     }
     
-    private let shareButton: UIButton = {
+    private lazy var shareButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "sharingButton"), for: .normal)
         button.addTarget(self, action: #selector(didTapShareButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
     
     private let scrollView: UIScrollView = {
         let scroll = UIScrollView()

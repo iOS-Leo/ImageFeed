@@ -6,7 +6,7 @@ final class TabBarController: UITabBarController {
         
         tabBar.backgroundColor = .ypBlackIOS
         tabBar.tintColor = .ypWhiteIOS
-   
+        
         let imagesListViewController = ImagesListViewController()
         imagesListViewController.tabBarItem = UITabBarItem(
             title: nil,
@@ -23,6 +23,3 @@ final class TabBarController: UITabBarController {
         self.viewControllers = [imagesListViewController, profileViewController]
     }
 }
-
-
-

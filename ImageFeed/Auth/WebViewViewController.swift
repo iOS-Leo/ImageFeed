@@ -29,7 +29,7 @@ final class WebViewViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     
     weak var delegate: WebViewViewControllerDelegate?
     private var estimatedProgressObservation: NSKeyValueObservation?
@@ -40,14 +40,14 @@ final class WebViewViewController: UIViewController {
         webView.navigationDelegate = self
         setupUI()
         setupConstraints()
-
+        
         
         estimatedProgressObservation = webView.observe(
-                    \.estimatedProgress,
-                    options: [],
-                     changeHandler: { [weak self] _, _ in
-                         guard let self = self else { return }
-                         self.updateProgress()})
+            \.estimatedProgress,
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+                 self.updateProgress()})
     }
     
     private func setupUI() {
@@ -55,34 +55,34 @@ final class WebViewViewController: UIViewController {
         view.addSubview(progressView)
         view.addSubview(backButton)
     }
-
+    
     private func setupConstraints() {
-            NSLayoutConstraint.activate([
-                webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-                progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                progressView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-              
-                backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-                backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-                backButton.widthAnchor.constraint(equalToConstant: 44),
-                backButton.heightAnchor.constraint(equalToConstant: 44)
-            ])
-        }
-        
-        @objc private func didTapBackButton() {
-            delegate?.webViewViewControllerDidCancel(self)
-        }
+            progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            progressView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            backButton.widthAnchor.constraint(equalToConstant: 44),
+            backButton.heightAnchor.constraint(equalToConstant: 44)
+        ])
+    }
+    
+    @objc private func didTapBackButton() {
+        delegate?.webViewViewControllerDidCancel(self)
+    }
     
     private func updateProgress() {
-            progressView.progress = Float(webView.estimatedProgress)
-            progressView.isHidden = abs(webView.estimatedProgress - 1.0) <= 0.0001
-        }
-      
+        progressView.progress = Float(webView.estimatedProgress)
+        progressView.isHidden = abs(webView.estimatedProgress - 1.0) <= 0.0001
+    }
+    
     enum WebViewConstants {
         static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     }
@@ -123,10 +123,10 @@ extension WebViewViewController: WKNavigationDelegate {
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
         if let url = navigationAction.request.url,
-            let urlComponents = URLComponents(string: url.absoluteString),
-            urlComponents.path == "/oauth/authorize/native",
-            let items = urlComponents.queryItems,
-            let codeItem = items.first(where: { $0.name == "code" })
+           let urlComponents = URLComponents(string: url.absoluteString),
+           urlComponents.path == "/oauth/authorize/native",
+           let items = urlComponents.queryItems,
+           let codeItem = items.first(where: { $0.name == "code" })
         {
             return codeItem.value
         } else {

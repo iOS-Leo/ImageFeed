@@ -1,6 +1,6 @@
 import Foundation
 final class ProfileImageService {
-    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
     private init() {}
     
@@ -25,8 +25,7 @@ final class ProfileImageService {
     func fetchProfileImageURL(username: String, _ completion : @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         
-        
-        if lastUsername == username {return}
+        guard lastUsername != username else { return }
         
         task?.cancel()
         lastUsername = username
@@ -74,7 +73,7 @@ final class ProfileImageService {
     private func makeRequest(username: String, token: String) -> URLRequest? {
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else { return nil }
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+        request.httpMethod = HTTPMethod.get.rawValue
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }

@@ -1,4 +1,3 @@
-//
 
 import UIKit
 
@@ -16,9 +15,9 @@ final class ImagesListViewController: UIViewController {
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "ru_RU")
-            formatter.dateFormat = "d MMMM yyyy" 
-            return formatter
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "d MMMM yyyy" 
+        return formatter
     }()
     
     override func viewDidLoad() {

@@ -25,20 +25,21 @@ final class ImagesListCell: UITableViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
- 
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    @available(*, unavailable)
+        required init?(coder: NSCoder) {
+            return nil
+        }
     
     private func setupUI() {
         selectionStyle = .none
         backgroundColor = .ypBlackIOS
-  
+        
         contentView.addSubview(cellImage)
         cellImage.addSubview(dateLabel)
         contentView.addSubview(likeButton)
@@ -49,24 +50,24 @@ final class ImagesListCell: UITableViewCell {
             cellImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
             cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             cellImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-       
+            
             dateLabel.leadingAnchor.constraint(equalTo: cellImage.leadingAnchor, constant: 8),
             dateLabel.bottomAnchor.constraint(equalTo: cellImage.bottomAnchor, constant: -8),
-       
+            
             likeButton.topAnchor.constraint(equalTo: cellImage.topAnchor),
             likeButton.trailingAnchor.constraint(equalTo: cellImage.trailingAnchor),
             likeButton.widthAnchor.constraint(equalToConstant: 44),
             likeButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-
+    
     func configCell(with image: UIImage?, date: String, isLiked: Bool) {
         cellImage.image = image
         dateLabel.text = date
-
+        
         let likeImageName = isLiked ? "likeEnable" : "likeDisable"
         likeButton.setImage(UIImage(named: likeImageName), for: .normal)
     }
-
+    
 }
 

@@ -12,11 +12,11 @@ final class AuthViewController: UIViewController {
     weak var delegate: AuthViewControllerDelegate?
     
     private let logoImageView: UIImageView = {
-            let imageView = UIImageView()
-            imageView.image = UIImage(named: "auth_screen_logo")
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            return imageView
-        }()
+        let imageView = UIImageView()
+        imageView.image = UIImage(resource: .authScreenLogo)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
     
     private lazy var loginButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -30,7 +30,7 @@ final class AuthViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     @objc private func didTapLoginButton() {
         let webViewViewController = WebViewViewController()
         webViewViewController.delegate = self
@@ -39,22 +39,22 @@ final class AuthViewController: UIViewController {
     }
     
     private func setupUI() {
+        
+        view.addSubview(logoImageView)
+        view.addSubview(loginButton)
+        
+        NSLayoutConstraint.activate([
+            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            logoImageView.widthAnchor.constraint(equalToConstant: 60),
+            logoImageView.heightAnchor.constraint(equalToConstant: 60),
             
-            view.addSubview(logoImageView)
-            view.addSubview(loginButton)
-            
-            NSLayoutConstraint.activate([
-                logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                logoImageView.widthAnchor.constraint(equalToConstant: 60),
-                logoImageView.heightAnchor.constraint(equalToConstant: 60),
-      
-                loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                loginButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -90),
-                loginButton.heightAnchor.constraint(equalToConstant: 48)
-            ])
-        }
+            loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            loginButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -90),
+            loginButton.heightAnchor.constraint(equalToConstant: 48)
+        ])
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,7 +67,7 @@ final class AuthViewController: UIViewController {
         navigationController?.navigationBar.backIndicatorImage = UIImage(named: "backButton")
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "backButton")
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        navigationItem.backBarButtonItem?.tintColor = UIColor(named: "ypBlack")
+        navigationItem.backBarButtonItem?.tintColor = UIColor(resource: .ypBlackIOS)
     }
 }
 
@@ -85,7 +85,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         UIBlockingProgressHUD.show()
         oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
-            guard let self = self else { return }
+            guard let self else { return }
             switch result {
             case .success(let token):
                 OAuth2TokenStorage.shared.token = token
