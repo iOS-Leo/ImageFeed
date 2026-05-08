@@ -4,10 +4,13 @@ import Kingfisher
 final class ProfileViewController: UIViewController {
     
     private var profileImageServiceObserver: NSObjectProtocol?
+    private let profileService = ProfileService.shared
+    
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 35
         imageView.clipsToBounds = true
         imageView.image = UIImage(resource: .photoProfile)
         return imageView
@@ -17,7 +20,7 @@ final class ProfileViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.boldSystemFont(ofSize: 23)
-        label.text = "Екатерина Новикова"
+        label.text = ""
         label.textColor = .ypWhiteIOS
         return label
     }()
@@ -26,7 +29,7 @@ final class ProfileViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 13)
-        label.text = "@ekaterina_novikova"
+        label.text = ""
         label.textColor = .ypWhiteIOS
         return label
     }()
@@ -35,7 +38,7 @@ final class ProfileViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 13)
-        label.text = "Hello, world!"
+        label.text = ""
         label.textColor = .ypWhiteIOS
         return label
     }()
@@ -48,6 +51,7 @@ final class ProfileViewController: UIViewController {
         button.contentHorizontalAlignment = .fill
         button.contentVerticalAlignment = .fill
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(logoutTapped), for: .touchUpInside)
         return button
     }()
     
@@ -130,7 +134,7 @@ final class ProfileViewController: UIViewController {
         
     }
     @objc private func logoutTapped() {
-        logoutButton.addTarget(self, action: #selector(logoutTapped), for: .touchUpInside)
+        //
     }
     
 }
