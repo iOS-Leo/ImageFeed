@@ -11,6 +11,7 @@ final class SplashViewController: UIViewController {
     
     private let profileService = ProfileService.shared
     private let storage = OAuth2TokenStorage.shared
+    private var isFirstAppear = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +21,9 @@ final class SplashViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        guard isFirstAppear else { return }
+        isFirstAppear = false
         
         if let token = storage.token {
             fetchProfile(token)

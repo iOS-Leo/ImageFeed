@@ -31,10 +31,16 @@ final class ImagesListCell: UITableViewCell {
         setupUI()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
+    }
+    
     @available(*, unavailable)
-        required init?(coder: NSCoder) {
-            return nil
-        }
+    required init?(coder: NSCoder) {
+        return nil
+    }
+    
     
     private func setupUI() {
         selectionStyle = .none
@@ -61,13 +67,24 @@ final class ImagesListCell: UITableViewCell {
         ])
     }
     
-    func configCell(with image: UIImage?, date: String, isLiked: Bool) {
-        cellImage.image = image
+    func configCell(
+        with textureURLString: String,
+        date: String,
+        isLiked: Bool,
+        completion: @escaping (Result<RetrieveImageResult, KingfisherError>) -> Void
+    ) {
         dateLabel.text = date
         
         let likeImageName = isLiked ? "likeEnable" : "likeDisable"
         likeButton.setImage(UIImage(named: likeImageName), for: .normal)
+        
+        let placeholder = UIImage(named: "Stub")
+        
+        guard let url = URL(string: textureURLString) else { return }
+        
+        cellImage.kf.indicatorType = .activity
+        cellImage.kf.setImage(with: url, placeholder: placeholder, completionHandler: completion)
     }
-    
 }
+
 
