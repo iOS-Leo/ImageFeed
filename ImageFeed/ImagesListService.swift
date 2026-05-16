@@ -28,7 +28,7 @@ final class ImagesListService {
         let largeImageURL: String
         let isLiked: Bool
     }
-
+    
     struct PhotoResult: Decodable {
         let id: String
         let width: Int
@@ -39,12 +39,12 @@ final class ImagesListService {
         let urls: UrlsResult
         
         enum CodingKeys: String, CodingKey {
-                case id, width, height, description, urls
-                case createdAt = "created_at"
-                case likedByUser = "liked_by_user"
-            }
+            case id, width, height, description, urls
+            case createdAt = "created_at"
+            case likedByUser = "liked_by_user"
+        }
     }
-
+    
     struct UrlsResult: Decodable {
         let thumb: String
         let full: String
@@ -105,7 +105,7 @@ final class ImagesListService {
                 }
                 
             case .failure(let error):
-                self.task = nil 
+                self.task = nil
                 print("[ImagesListService]: Error loading page \(nextPage) - \(error)")
             }
         }
@@ -113,4 +113,64 @@ final class ImagesListService {
         self.task = task
         task.resume()
     }
+    
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
+ {
+        guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like") else { return }
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = isLike ? "POST" : "DELETE"
+        if let token = OAuth2TokenStorage.shared.token  {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let task = urlSession.dataTask(with: request) { [weak self] (data, response, error) in
+            guard let self else { return }
+            
+            if let error = error {
+                DispatchQueue.main.async {
+                    completion(.failure(error))}
+                return
+            }
+            
+            
+            if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
+                
+                DispatchQueue.main.async {
+                    if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+                        let photo = self.photos[index]
+                        let newPhoto = Photo(
+                            id: photo.id,
+                            size: photo.size,
+                            createdAt: photo.createdAt,
+                            welcomeDescription: photo.welcomeDescription,
+                            thumbImageURL: photo.thumbImageURL,
+                            largeImageURL: photo.largeImageURL,
+                            isLiked: !photo.isLiked
+                        )
+                        self.photos = self.photos.withReplaced(itemAt: index, newValue: newPhoto)
+                    }
+                    completion(.success(()))
+                }
+            } else {
+                let statusCodeError = NSError(
+                    domain: "ImagesListService",
+                    code: 0,
+                    userInfo: [NSLocalizedDescriptionKey: "Сервер вернул ошибку при обработке лайка"]
+                )
+                DispatchQueue.main.async { completion(.failure(statusCodeError)) }
+            }
+        }
+        task.resume()
+    }
 }
+
+extension Array {
+    func withReplaced(itemAt index: Int, newValue: Element) -> [Element] {
+        var modifiedArray = self
+        guard index >= 0 && index < count else { return self }
+        modifiedArray[index] = newValue
+        return modifiedArray
+    }
+}
+
