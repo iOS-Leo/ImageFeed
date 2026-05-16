@@ -113,7 +113,8 @@ extension ImagesListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let singleImageVC = SingleImageViewController()
-        singleImageVC.image = nil
+        let photo = photos[indexPath.row]
+        singleImageVC.imageURL = URL(string: photo.largeImageURL)
         singleImageVC.modalPresentationStyle = .fullScreen
         present(singleImageVC, animated: true)
     }
@@ -141,14 +142,11 @@ extension ImagesListViewController: UITableViewDelegate {
 
 extension ImagesListViewController: ImagesListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
-        // Находим индекс ячейки в таблице
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let photo = photos[indexPath.row]
-        
       
         UIBlockingProgressHUD.show()
         
-     
         imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) { [weak self] result in
             guard let self = self else { return }
             

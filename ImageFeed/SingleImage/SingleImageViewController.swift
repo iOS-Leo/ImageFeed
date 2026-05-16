@@ -1,5 +1,9 @@
 import UIKit
+import Kingfisher
 final class SingleImageViewController: UIViewController {
+    
+    var imageURL: URL?
+    
     var image: UIImage?{
         didSet {
             guard isViewLoaded, let image = image else { return }
@@ -46,13 +50,7 @@ final class SingleImageViewController: UIViewController {
         
         scrollView.delegate = self
         setupUI()
-        
-        guard let image else { return }
-        
-        imageView.image = image
-        imageView.frame.size = image.size
-        
-        rescaleAndCenterImageInScrollView(image: image)
+        loadImage()
     }
     
     @objc private func didTapBackButton() {
@@ -109,6 +107,37 @@ final class SingleImageViewController: UIViewController {
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
+    
+    private func loadImage() {
+            guard let imageURL = imageURL else { return }
+      
+            UIBlockingProgressHUD.show()
+            
+            imageView.kf.setImage(with: imageURL) { [weak self] result in
+                UIBlockingProgressHUD.dismiss()
+                
+                guard let self = self else { return }
+                switch result {
+                case .success(let imageResult):
+                    self.image = imageResult.image
+                case .failure:
+                    self.showError()
+                }
+            }
+        }
+    
+    private func showError() {
+            let alert = UIAlertController(
+                title: "Что-то пошло не так.",
+                message: "Попробовать ещё раз?",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
+            alert.addAction(UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+                self?.loadImage()
+            })
+            present(alert, animated: true)
+        }
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {

@@ -63,7 +63,6 @@ final class ImagesListCell: UITableViewCell {
         likeButton.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            // Картинка
             cellImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
             cellImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
             cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),

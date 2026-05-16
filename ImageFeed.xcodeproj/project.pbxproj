@@ -572,8 +572,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/relatedcode/ProgressHUD";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 15.0.1;
+				kind = exactVersion;
+				version = 14.1.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
