@@ -1,7 +1,13 @@
 import UIKit
 import Kingfisher
+
+protocol ImagesListCellDelegate: AnyObject {
+    func imageListCellDidTapLike(_ cell: ImagesListCell)
+}
+
 final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
+    weak var delegate: ImagesListCellDelegate?
     private let cellImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -26,6 +32,11 @@ final class ImagesListCell: UITableViewCell {
         return button
     }()
     
+    @objc private func likeButtonClicked() {
+        delegate?.imageListCellDidTapLike(self)
+    }
+
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -49,6 +60,7 @@ final class ImagesListCell: UITableViewCell {
         contentView.addSubview(cellImage)
         cellImage.addSubview(dateLabel)
         contentView.addSubview(likeButton)
+        likeButton.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
             // Картинка
@@ -67,6 +79,12 @@ final class ImagesListCell: UITableViewCell {
         ])
     }
     
+    func setIsLiked(_ isLiked: Bool) {
+        let likeImageName = isLiked ? "likeEnable" : "likeDisable"
+        likeButton.setImage(UIImage(named: likeImageName), for: .normal)
+    }
+
+    
     func configCell(
         with textureURLString: String,
         date: String,
@@ -75,9 +93,8 @@ final class ImagesListCell: UITableViewCell {
     ) {
         dateLabel.text = date
         
-        let likeImageName = isLiked ? "likeEnable" : "likeDisable"
-        likeButton.setImage(UIImage(named: likeImageName), for: .normal)
-        
+       
+        setIsLiked(isLiked)
         let placeholder = UIImage(named: "Stub")
         
         guard let url = URL(string: textureURLString) else { return }

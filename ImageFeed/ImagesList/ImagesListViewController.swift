@@ -93,19 +93,20 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-            let photo = photos[indexPath.row]
-            let dateString = photo.createdAt != nil ? dateFormatter.string(from: photo.createdAt!) : ""
-            
-            cell.configCell(with: photo.thumbImageURL, date: dateString, isLiked: photo.isLiked) { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .success(_):
-                    self.tableView.performBatchUpdates(nil, completion: nil)
-                case .failure(let error):
-                    print("[ImagesListViewController]: Ошибка загрузки картинки Kingfisher: \(error)")
-                }
+        let photo = photos[indexPath.row]
+        let dateString = photo.createdAt != nil ? dateFormatter.string(from: photo.createdAt!) : ""
+        cell.delegate = self
+        
+        cell.configCell(with: photo.thumbImageURL, date: dateString, isLiked: photo.isLiked) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(_):
+                self.tableView.performBatchUpdates(nil, completion: nil)
+            case .failure(let error):
+                print("[ImagesListViewController]: Ошибка загрузки картинки Kingfisher: \(error)")
             }
         }
+    }
 }
 
 extension ImagesListViewController: UITableViewDelegate {
@@ -130,10 +131,46 @@ extension ImagesListViewController: UITableViewDelegate {
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
         let imageWidth = photo.size.width
-                if imageWidth == 0 { return 0 }
+        if imageWidth == 0 { return 0 }
         let scale = imageViewWidth / imageWidth
         let cellHeight = photo.size.height * scale + imageInsets.top + imageInsets.bottom
         return cellHeight
     }
     
 }
+
+extension ImagesListViewController: ImagesListCellDelegate {
+    func imageListCellDidTapLike(_ cell: ImagesListCell) {
+        // Находим индекс ячейки в таблице
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        let photo = photos[indexPath.row]
+        
+      
+        UIBlockingProgressHUD.show()
+        
+     
+        imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) { [weak self] result in
+            guard let self = self else { return }
+            
+            UIBlockingProgressHUD.dismiss()
+            
+            switch result {
+            case .success:
+                self.photos = self.imagesListService.photos
+                let updatedPhoto = self.photos[indexPath.row]
+                cell.setIsLiked(updatedPhoto.isLiked)
+                
+            case .failure(let error):
+                print("[ImagesListViewController]: Ошибка при изменении лайка: \(error)")
+                let alert = UIAlertController(
+                    title: "Что-то пошло не так",
+                    message: "Не удалось изменить статус лайка",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "Ок", style: .default))
+                self.present(alert, animated: true)
+            }
+        }
+    }
+}
+
