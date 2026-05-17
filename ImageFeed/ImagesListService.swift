@@ -114,8 +114,7 @@ final class ImagesListService {
         task.resume()
     }
     
-    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
- {
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like") else { return }
         var request = URLRequest(url: url)
         
@@ -163,6 +162,12 @@ final class ImagesListService {
         }
         task.resume()
     }
+    
+    func clearPhotosData() {
+            photos = []
+            task?.cancel()
+            lastLoadedPage = nil
+        }
 }
 
 extension Array {

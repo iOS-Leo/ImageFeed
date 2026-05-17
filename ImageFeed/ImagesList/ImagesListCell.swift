@@ -52,7 +52,6 @@ final class ImagesListCell: UITableViewCell {
         return nil
     }
     
-    
     private func setupUI() {
         selectionStyle = .none
         backgroundColor = .ypBlackIOS

@@ -1,4 +1,5 @@
 import Foundation
+
 final class ProfileImageService {
     static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
@@ -76,5 +77,11 @@ final class ProfileImageService {
         request.httpMethod = HTTPMethod.get.rawValue
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
+    }
+    
+    func clearAvatarData() {
+        avatarURL = nil
+        task?.cancel()
+        lastUsername = nil
     }
 }
