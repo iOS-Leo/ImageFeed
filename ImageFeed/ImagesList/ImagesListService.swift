@@ -8,10 +8,16 @@
 import UIKit
 
 
+protocol ImagesListServiceProtocol {
+    func fetchPhotosNextPage()
+    var photos: [ImagesListService.Photo] { get }
+}
 
-final class ImagesListService {
+
+final class ImagesListService: ImagesListServiceProtocol {
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     static let shared = ImagesListService()
+    private static let isoDateFormatter = ISO8601DateFormatter()
     private init() {}
     private let urlSession = URLSession.shared
     private let storage = OAuth2TokenStorage.shared
@@ -71,9 +77,6 @@ final class ImagesListService {
         request.httpMethod = HTTPMethod.get.rawValue
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
-        
-        
-        
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], Error>) in
             guard let self = self else { return }
             
@@ -84,14 +87,13 @@ final class ImagesListService {
                     Photo(
                         id: photoResult.id,
                         size: CGSize(width: photoResult.width, height: photoResult.height),
-                        createdAt: ISO8601DateFormatter().date(from: photoResult.createdAt ?? ""),
+                        createdAt: Self.isoDateFormatter.date(from: photoResult.createdAt ?? ""),
                         welcomeDescription: photoResult.description,
                         thumbImageURL: photoResult.urls.thumb,
                         largeImageURL: photoResult.urls.full,
                         isLiked: photoResult.likedByUser
                     )
                 }
-                
                 
                 DispatchQueue.main.async {
                     self.photos.append(contentsOf: newPhotos)
@@ -118,7 +120,7 @@ final class ImagesListService {
         guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like") else { return }
         var request = URLRequest(url: url)
         
-        request.httpMethod = isLike ? "POST" : "DELETE"
+        request.httpMethod = isLike ? "DELETE" : "POST"
         if let token = OAuth2TokenStorage.shared.token  {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
@@ -178,4 +180,3 @@ extension Array {
         return modifiedArray
     }
 }
-
