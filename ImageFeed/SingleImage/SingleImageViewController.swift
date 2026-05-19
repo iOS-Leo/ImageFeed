@@ -2,6 +2,7 @@ import UIKit
 import Kingfisher
 final class SingleImageViewController: UIViewController {
     
+    // MARK: - Properties
     var imageURL: URL?
     
     var image: UIImage?{
@@ -13,6 +14,7 @@ final class SingleImageViewController: UIViewController {
         }
     }
     
+    // MARK: - UI Elements
     private lazy var shareButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "sharingButton"), for: .normal)
@@ -21,13 +23,14 @@ final class SingleImageViewController: UIViewController {
         return button
     }()
     
-    
     private let scrollView: UIScrollView = {
         let scroll = UIScrollView()
         scroll.backgroundColor = .ypBlackIOS
         scroll.minimumZoomScale = 0.1
         scroll.maximumZoomScale = 1.25
         scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.bounces = true
+        scroll.bouncesZoom = true
         return scroll
     }()
     
@@ -45,6 +48,7 @@ final class SingleImageViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -53,6 +57,7 @@ final class SingleImageViewController: UIViewController {
         loadImage()
     }
     
+    // MARK: - Actions
     @objc private func didTapBackButton() {
         dismiss(animated: true, completion: nil)
     }
@@ -63,6 +68,7 @@ final class SingleImageViewController: UIViewController {
         present(shareController, animated: true)
     }
     
+    // MARK: - Private Methods
     private func setupUI() {
         view.backgroundColor = .ypBlackIOS
         
@@ -90,18 +96,20 @@ final class SingleImageViewController: UIViewController {
         ])
     }
     
-    
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         let minZoomScale = scrollView.minimumZoomScale
         let maxZoomScale = scrollView.maximumZoomScale
         view.layoutIfNeeded()
+        
         let visibleRectSize = scrollView.bounds.size
         let imageSize = image.size
         let hScale = visibleRectSize.width / imageSize.width
         let vScale = visibleRectSize.height / imageSize.height
         let scale = min(maxZoomScale, max(minZoomScale, min(hScale, vScale)))
+        
         scrollView.setZoomScale(scale, animated: false)
         scrollView.layoutIfNeeded()
+        
         let newContentSize = scrollView.contentSize
         let x = (newContentSize.width - visibleRectSize.width) / 2
         let y = (newContentSize.height - visibleRectSize.height) / 2
@@ -109,37 +117,38 @@ final class SingleImageViewController: UIViewController {
     }
     
     private func loadImage() {
-            guard let imageURL = imageURL else { return }
-      
-            UIBlockingProgressHUD.show()
+        guard let imageURL = imageURL else { return }
+        
+        UIBlockingProgressHUD.show()
+        
+        imageView.kf.setImage(with: imageURL) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
             
-            imageView.kf.setImage(with: imageURL) { [weak self] result in
-                UIBlockingProgressHUD.dismiss()
-                
-                guard let self = self else { return }
-                switch result {
-                case .success(let imageResult):
-                    self.image = imageResult.image
-                case .failure:
-                    self.showError()
-                }
+            guard let self = self else { return }
+            switch result {
+            case .success(let imageResult):
+                self.image = imageResult.image
+            case .failure:
+                self.showError()
             }
         }
+    }
     
     private func showError() {
-            let alert = UIAlertController(
-                title: "Что-то пошло не так.",
-                message: "Попробовать ещё раз?",
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
-            alert.addAction(UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
-                self?.loadImage()
-            })
-            present(alert, animated: true)
-        }
+        let alert = UIAlertController(
+            title: "Что-то пошло не так.",
+            message: "Попробовать ещё раз?",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            self?.loadImage()
+        })
+        present(alert, animated: true)
+    }
 }
 
+// MARK: - UIScrollViewDelegate
 extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         imageView

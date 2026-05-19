@@ -10,7 +10,6 @@ import UIKit
 final class ShimmerAnimationHelper {
     static let shared = ShimmerAnimationHelper()
     
-    
     private init() {}
     
     func createGradient(for view: UIView, cornerRadius: CGFloat) -> CAGradientLayer {

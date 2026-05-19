@@ -4,6 +4,12 @@ import Kingfisher
 
 final class ImagesListViewController: UIViewController {
     
+    // MARK: - Properties
+    private var photos: [ImagesListService.Photo] = []
+    private let imagesListService = ImagesListService.shared
+    private var imagesListServiceObserver: NSObjectProtocol?
+    
+    // MARK: - Outlets
     private let tableView: UITableView = {
         let table = UITableView()
         table.backgroundColor = .ypBlackIOS
@@ -12,11 +18,7 @@ final class ImagesListViewController: UIViewController {
         return table
     }()
     
-    private var photos: [ImagesListService.Photo] = []
-    private let imagesListService = ImagesListService.shared
-    private let showSingleImageSegueIdentifier = "ShowSingleImage"
-    private var imagesListServiceObserver: NSObjectProtocol?
-    
+    // MARK: - DateFormatter
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
@@ -24,6 +26,7 @@ final class ImagesListViewController: UIViewController {
         return formatter
     }()
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -32,11 +35,12 @@ final class ImagesListViewController: UIViewController {
     }
     
     deinit {
-            if let observer = imagesListServiceObserver {
-                NotificationCenter.default.removeObserver(observer)
-            }
+        if let observer = imagesListServiceObserver {
+            NotificationCenter.default.removeObserver(observer)
         }
+    }
     
+    // MARK: - Private Methods
     private func setupUI() {
         view.backgroundColor = .ypBlackIOS
         view.addSubview(tableView)
@@ -53,15 +57,14 @@ final class ImagesListViewController: UIViewController {
         tableView.register(ImagesListCell.self, forCellReuseIdentifier: ImagesListCell.reuseIdentifier)
     }
     
-    func updateTableViewAnimated() {
+    private func updateTableViewAnimated() {
         let oldCount = photos.count
         let newCount = imagesListService.photos.count
         photos = imagesListService.photos
+        
         if oldCount != newCount {
             tableView.performBatchUpdates {
-                let indexPaths = (oldCount..<newCount).map { i in
-                    IndexPath(row: i, section: 0)
-                }
+                let indexPaths = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
                 tableView.insertRows(at: indexPaths, with: .automatic)
             } completion: { _ in }
         }
@@ -79,6 +82,26 @@ final class ImagesListViewController: UIViewController {
     }
 }
 
+// MARK: - Configuration
+extension ImagesListViewController{
+    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+        let photo = photos[indexPath.row]
+        let dateString = photo.createdAt.map { dateFormatter.string(from: $0) } ?? ""
+        cell.delegate = self
+        
+        cell.configCell(with: photo.thumbImageURL, date: dateString, isLiked: photo.isLiked) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(_):
+                self.tableView.performBatchUpdates(nil, completion: nil)
+            case .failure(let error):
+                print("[ImagesListViewController]: Ошибка загрузки картинки Kingfisher: \(error)")
+            }
+        }
+    }
+}
+
+// MARK: - UITableViewDataSource
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         photos.count
@@ -97,26 +120,8 @@ extension ImagesListViewController: UITableViewDataSource {
     }
 }
 
-extension ImagesListViewController {
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        let photo = photos[indexPath.row]
-        let dateString = photo.createdAt != nil ? dateFormatter.string(from: photo.createdAt!) : ""
-        cell.delegate = self
-        
-        cell.configCell(with: photo.thumbImageURL, date: dateString, isLiked: photo.isLiked) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(_):
-                self.tableView.performBatchUpdates(nil, completion: nil)
-            case .failure(let error):
-                print("[ImagesListViewController]: Ошибка загрузки картинки Kingfisher: \(error)")
-            }
-        }
-    }
-}
-
+// MARK: - UITableViewDelegate
 extension ImagesListViewController: UITableViewDelegate {
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let singleImageVC = SingleImageViewController()
         let photo = photos[indexPath.row]
@@ -146,11 +151,12 @@ extension ImagesListViewController: UITableViewDelegate {
     
 }
 
+// MARK: - ImagesListCellDelegate
 extension ImagesListViewController: ImagesListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let photo = photos[indexPath.row]
-      
+        
         UIBlockingProgressHUD.show()
         
         imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) { [weak self] result in
@@ -177,4 +183,3 @@ extension ImagesListViewController: ImagesListCellDelegate {
         }
     }
 }
-

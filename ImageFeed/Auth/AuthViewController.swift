@@ -7,10 +7,11 @@ protocol AuthViewControllerDelegate: AnyObject {
 
 final class AuthViewController: UIViewController {
     
+    // MARK: - Properties
     private let oauth2Service = OAuth2Service.shared
-    
     weak var delegate: AuthViewControllerDelegate?
     
+    // MARK: - Outlets
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(resource: .authScreenLogo)
@@ -31,6 +32,14 @@ final class AuthViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .ypBlackIOS
+        setupUI()
+    }
+    
+    // MARK: - Actions
     @objc private func didTapLoginButton() {
         let webViewViewController = WebViewViewController()
         webViewViewController.delegate = self
@@ -38,6 +47,7 @@ final class AuthViewController: UIViewController {
         present(webViewViewController, animated: true)
     }
     
+    // MARK: - Private Methods
     private func setupUI() {
         
         view.addSubview(logoImageView)
@@ -56,21 +66,19 @@ final class AuthViewController: UIViewController {
         ])
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .ypBlackIOS
-        configureBackButton()
-        setupUI()
-    }
-    
-    private func configureBackButton() {
-        navigationController?.navigationBar.backIndicatorImage = UIImage(named: "backButton")
-        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "backButton")
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        navigationItem.backBarButtonItem?.tintColor = UIColor(resource: .ypBlackIOS)
+    private func showErrorAlert(error: Error) {
+        let alert = UIAlertController(
+            title: "Что-то пошло не так",
+            message: "Не удалось войти в систему",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 
+// MARK: - WebViewViewControllerDelegate
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         dismiss(animated: true)
@@ -95,16 +103,5 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 self.showErrorAlert(error: error)
             }
         }
-    }
-    
-    private func showErrorAlert(error: Error) {
-        let alert = UIAlertController(
-            title: "Что-то пошло не так",
-            message: "Не удалось войти в систему",
-            preferredStyle: .alert
-        )
-        
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
     }
 }

@@ -3,11 +3,12 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
+    // MARK: - Properties
     private var profileImageServiceObserver: NSObjectProtocol?
     private let profileService = ProfileService.shared
-    
     private var animationLayers = Set<CALayer>()
     
+    // MARK: - UI Elements
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -57,7 +58,7 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
-    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypBlackIOS
@@ -74,6 +75,27 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    // MARK: - Actions
+    @objc private func logoutTapped() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверен, что хочешь выйти?",
+            preferredStyle: .alert
+        )
+        
+        let yesAction = UIAlertAction(title: "Да", style: .destructive) { _ in
+            ProfileLogoutService.shared.logout()
+        }
+        
+        let noAction = UIAlertAction(title: "Нет", style: .cancel)
+        
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        
+        present(alert, animated: true)
+    }
+    
+    // MARK: - Private Methods
     private func updateAvatar() {
         guard
             let profileImageURL = ProfileImageService.shared.avatarURL,
@@ -132,25 +154,6 @@ final class ProfileViewController: UIViewController {
         
     }
     
-    @objc private func logoutTapped() {
-        let alert = UIAlertController(
-            title: "Пока, пока!",
-            message: "Уверен, что хочешь выйти?",
-            preferredStyle: .alert
-        )
-        
-        let yesAction = UIAlertAction(title: "Да", style: .destructive) { _ in
-            ProfileLogoutService.shared.logout()
-        }
-        
-        let noAction = UIAlertAction(title: "Нет", style: .cancel)
-        
-        alert.addAction(yesAction)
-        alert.addAction(noAction)
-        
-        present(alert, animated: true)
-    }
-    
     private func checkProfileStatus() {
         if let profile = profileService.profile {
             updateProfileDetails(profile: profile)
@@ -185,8 +188,6 @@ final class ProfileViewController: UIViewController {
         animationLayers.insert(gradient)
         view.layer.addSublayer(gradient)
     }
-    
-    
     
     private func removeProfileShimmers() {
         animationLayers.forEach { gradient in

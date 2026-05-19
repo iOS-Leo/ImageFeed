@@ -6,8 +6,12 @@ protocol ImagesListCellDelegate: AnyObject {
 }
 
 final class ImagesListCell: UITableViewCell {
+    // MARK: - Constants
     static let reuseIdentifier = "ImagesListCell"
+    
+    // MARK: - Properties
     weak var delegate: ImagesListCellDelegate?
+    private var animationLayers = Set<CALayer>()
     
     enum FeedCellImageState {
         case loading
@@ -15,8 +19,7 @@ final class ImagesListCell: UITableViewCell {
         case finished(UIImage)
     }
     
-    private var animationLayers = Set<CALayer>()
-    
+    // MARK: - Outlets
     private let cellImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -41,11 +44,7 @@ final class ImagesListCell: UITableViewCell {
         return button
     }()
     
-    @objc private func likeButtonClicked() {
-        delegate?.imageListCellDidTapLike(self)
-    }
-    
-    
+    // MARK: - Lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -60,55 +59,30 @@ final class ImagesListCell: UITableViewCell {
         
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        animationLayers.forEach { gradient in
+            gradient.frame = cellImage.bounds
+        }
+    }
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         return nil
     }
     
-    private func setupUI() {
-        selectionStyle = .none
-        backgroundColor = .ypBlackIOS
-        
-        contentView.addSubview(cellImage)
-        cellImage.addSubview(dateLabel)
-        contentView.addSubview(likeButton)
-        likeButton.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-            cellImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-            cellImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
-            cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            cellImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            
-            dateLabel.leadingAnchor.constraint(equalTo: cellImage.leadingAnchor, constant: 8),
-            dateLabel.bottomAnchor.constraint(equalTo: cellImage.bottomAnchor, constant: -8),
-            
-            likeButton.topAnchor.constraint(equalTo: cellImage.topAnchor),
-            likeButton.trailingAnchor.constraint(equalTo: cellImage.trailingAnchor),
-            likeButton.widthAnchor.constraint(equalToConstant: 44),
-            likeButton.heightAnchor.constraint(equalToConstant: 44)
-        ])
+    // MARK: - Actions
+    @objc private func likeButtonClicked() {
+        delegate?.imageListCellDidTapLike(self)
     }
+    
+    // MARK: - Public Methods
+    
     
     func setIsLiked(_ isLiked: Bool) {
         let likeImageName = isLiked ? "likeEnable" : "likeDisable"
         likeButton.setImage(UIImage(named: likeImageName), for: .normal)
     }
-    
-    private func render(state: FeedCellImageState) {
-        switch state {
-        case .loading:
-            startCellShimmer()
-            cellImage.image = nil
-        case .error:
-            removeCellShimmers()
-            cellImage.image = UIImage(named: "Stub")
-        case .finished(let image):
-            removeCellShimmers()
-            cellImage.image = image
-        }
-    }
-    
     
     func configCell(
         with textureURLString: String,
@@ -139,6 +113,46 @@ final class ImagesListCell: UITableViewCell {
         }
     }
     
+    // MARK: - Private Methods
+    private func render(state: FeedCellImageState) {
+        switch state {
+        case .loading:
+            startCellShimmer()
+            cellImage.image = nil
+        case .error:
+            removeCellShimmers()
+            cellImage.image = UIImage(named: "Stub")
+        case .finished(let image):
+            removeCellShimmers()
+            cellImage.image = image
+        }
+    }
+    
+    private func setupUI() {
+        selectionStyle = .none
+        backgroundColor = .ypBlackIOS
+        
+        contentView.addSubview(cellImage)
+        cellImage.addSubview(dateLabel)
+        contentView.addSubview(likeButton)
+        likeButton.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
+        
+        NSLayoutConstraint.activate([
+            cellImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
+            cellImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            cellImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            
+            dateLabel.leadingAnchor.constraint(equalTo: cellImage.leadingAnchor, constant: 8),
+            dateLabel.bottomAnchor.constraint(equalTo: cellImage.bottomAnchor, constant: -8),
+            
+            likeButton.topAnchor.constraint(equalTo: cellImage.topAnchor),
+            likeButton.trailingAnchor.constraint(equalTo: cellImage.trailingAnchor),
+            likeButton.widthAnchor.constraint(equalToConstant: 44),
+            likeButton.heightAnchor.constraint(equalToConstant: 44)
+        ])
+    }
+    
     private func startCellShimmer() {
         cellImage.layer.masksToBounds = true
         
@@ -155,14 +169,6 @@ final class ImagesListCell: UITableViewCell {
         }
         animationLayers.removeAll()
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        animationLayers.forEach { gradient in
-            gradient.frame = cellImage.bounds
-        }
-    }
-    
 }
 
 

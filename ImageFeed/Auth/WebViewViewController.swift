@@ -8,10 +8,15 @@ protocol WebViewViewControllerDelegate: AnyObject {
 
 final class WebViewViewController: UIViewController {
     
+    // MARK: - Properties
+    weak var delegate: WebViewViewControllerDelegate?
+    private var estimatedProgressObservation: NSKeyValueObservation?
+    
+    // MARK: - Outlets
     private lazy var webView: WKWebView = {
         let webView = WKWebView()
         webView.translatesAutoresizingMaskIntoConstraints = false
-        webView.backgroundColor = .ypWhiteIOS // Или .white
+        webView.backgroundColor = .ypWhiteIOS 
         return webView
     }()
     
@@ -30,10 +35,7 @@ final class WebViewViewController: UIViewController {
         return button
     }()
     
-    
-    weak var delegate: WebViewViewControllerDelegate?
-    private var estimatedProgressObservation: NSKeyValueObservation?
-    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         loadAuthView()
@@ -49,6 +51,13 @@ final class WebViewViewController: UIViewController {
                  self.updateProgress()})
     }
     
+    // MARK: - Actions
+    override func viewDidDisappear(_ animated: Bool) {
+            super.viewDidDisappear(animated)
+            estimatedProgressObservation = nil
+        }
+
+    // MARK: - Private Methods
     private func setupUI() {
         view.addSubview(webView)
         view.addSubview(progressView)
@@ -106,6 +115,7 @@ final class WebViewViewController: UIViewController {
     }
 }
 
+// MARK: - WKNavigationDelegate
 extension WebViewViewController: WKNavigationDelegate {
     func webView(
         _ webView: WKWebView,

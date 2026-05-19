@@ -8,6 +8,20 @@ enum NetworkError: Error {
     case decodingError(Error)
 }
 
+struct OAuthTokenResponse: Decodable {
+    let accessToken: String
+    let tokenType: String
+    let scope: String
+    let createdAt: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case accessToken = "access_token"
+        case tokenType = "token_type"
+        case scope = "scope"
+        case createdAt = "created_at"
+    }
+}
+
 enum AuthServiceError: Error {
     case invalidRequest
 }
@@ -16,10 +30,12 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
     
+    // MARK: - Properties
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     private var lastCode: String?
     
+    // MARK: - Public Methods
     func fetchOAuthToken(code: String, completion: @escaping(Result<String,Error>) -> Void) {
         assert(Thread.isMainThread)
         
@@ -52,7 +68,7 @@ final class OAuth2Service {
         task.resume()
     }
     
-    
+    // MARK: - Private Methods
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
             return nil
@@ -71,20 +87,6 @@ final class OAuth2Service {
         var request = URLRequest(url: authTokenUrl)
         request.httpMethod = HTTPMethod.post.rawValue
         return request
-    }
-    
-    struct OAuthTokenResponse: Decodable {
-        let accessToken: String
-        let tokenType: String
-        let scope: String
-        let createdAt: Int
-        
-        enum CodingKeys: String, CodingKey {
-            case accessToken = "access_token"
-            case tokenType = "token_type"
-            case scope = "scope"
-            case createdAt = "created_at"
-        }
     }
 }
 
@@ -117,6 +119,8 @@ extension URLSession {
         
         return task
     }
+    
+    
     func objectTask<T: Decodable>(
         for request: URLRequest,
         completion: @escaping (Result<T, Error>) -> Void
