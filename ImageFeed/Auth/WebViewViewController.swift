@@ -41,7 +41,6 @@ final class WebViewViewController: UIViewController {
         setupUI()
         setupConstraints()
         
-        
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
              options: [],

@@ -31,6 +31,12 @@ final class ImagesListViewController: UIViewController {
         imagesListService.fetchPhotosNextPage()
     }
     
+    deinit {
+            if let observer = imagesListServiceObserver {
+                NotificationCenter.default.removeObserver(observer)
+            }
+        }
+    
     private func setupUI() {
         view.backgroundColor = .ypBlackIOS
         view.addSubview(tableView)
