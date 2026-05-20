@@ -3,9 +3,12 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
+    // MARK: - Properties
     private var profileImageServiceObserver: NSObjectProtocol?
     private let profileService = ProfileService.shared
+    private var animationLayers = Set<CALayer>()
     
+    // MARK: - UI Elements
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -55,28 +58,44 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
-    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypBlackIOS
         setupView()
         setupConstraints()
         
-        if let profile = ProfileService.shared.profile {
-            updateProfileDetails(profile: profile)
-        }
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-        updateAvatar()
+        checkProfileStatus()
+        setupNotificationObserver()
     }
     
+    deinit {
+        if let observer = profileImageServiceObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
+    // MARK: - Actions
+    @objc private func logoutTapped() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверен, что хочешь выйти?",
+            preferredStyle: .alert
+        )
+        
+        let yesAction = UIAlertAction(title: "Да", style: .destructive) { _ in
+            ProfileLogoutService.shared.logout()
+        }
+        
+        let noAction = UIAlertAction(title: "Нет", style: .cancel)
+        
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        
+        present(alert, animated: true)
+    }
+    
+    // MARK: - Private Methods
     private func updateAvatar() {
         guard
             let profileImageURL = ProfileImageService.shared.avatarURL,
@@ -92,6 +111,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateProfileDetails(profile: ProfileService.Profile) {
+        removeProfileShimmers()
         nameLabel.text = profile.name
         loginNameLabel.text = profile.loginName
         descriptionLabel.text = profile.bio
@@ -133,8 +153,47 @@ final class ProfileViewController: UIViewController {
         ])
         
     }
-    @objc private func logoutTapped() {
-        //
+    
+    private func checkProfileStatus() {
+        if let profile = profileService.profile {
+            updateProfileDetails(profile: profile)
+        } else {
+            startProfileShimmers()
+        }
+        updateAvatar()
     }
     
+    private func setupNotificationObserver() {
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            self.removeProfileShimmers()
+            self.updateAvatar()
+        }
+    }
+    
+    private func startProfileShimmers() {
+        setupGradient(for: avatarImageView, size: CGSize(width: 70, height: 70), cornerRadius: 35)
+        setupGradient(for: nameLabel, size: CGSize(width: 223, height: 23), cornerRadius: 11.5)
+        setupGradient(for: loginNameLabel, size: CGSize(width: 89, height: 13), cornerRadius: 6.5)
+        setupGradient(for: descriptionLabel, size: CGSize(width: 67, height: 13), cornerRadius: 6.5)
+    }
+    
+    private func setupGradient(for view: UIView, size: CGSize, cornerRadius: CGFloat) {
+        let gradient = ShimmerAnimationHelper.shared.createGradient(for: view, cornerRadius: cornerRadius)
+        
+        animationLayers.insert(gradient)
+        view.layer.addSublayer(gradient)
+    }
+    
+    private func removeProfileShimmers() {
+        animationLayers.forEach { gradient in
+            gradient.removeAnimation(forKey: "locationsChange")
+            gradient.removeFromSuperlayer()
+        }
+        animationLayers.removeAll()
+    }
 }

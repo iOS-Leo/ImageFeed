@@ -1,9 +1,16 @@
 import Foundation
+
 final class ProfileImageService {
+    
+    // MARK: - Constants
     static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
+    
+    // MARK: - Init
     private init() {}
     
+    
+    // MARK: - Properties
     private let urlSession = URLSession.shared
     private let storage = OAuth2TokenStorage.shared
     private var task: URLSessionTask?
@@ -11,6 +18,8 @@ final class ProfileImageService {
     
     private(set) var avatarURL: String?
     
+    // MARK: - Structs
+
     struct UserResult: Codable {
         let profileImage: ProfileImage
         
@@ -22,6 +31,7 @@ final class ProfileImageService {
         let small: String
     }
     
+    // MARK: - Public Methods
     func fetchProfileImageURL(username: String, _ completion : @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         
@@ -35,41 +45,49 @@ final class ProfileImageService {
             return
         }
         
-        
         guard let request = makeRequest(username:username, token: token) else {
             completion(.failure(NetworkError.invalidRequest))
             return
         }
         
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
-            guard let self = self else { return }
             
-            switch result {
-            case .success(let userResult):
-                let profileImageURL = userResult.profileImage.small
-                self.avatarURL = profileImageURL
-                completion(.success(profileImageURL))
+            DispatchQueue.main.async {
+                guard let self = self else { return }
                 
-                NotificationCenter.default.post(
-                    name: ProfileImageService.didChangeNotification,
-                    object: self,
-                    userInfo: ["URL": profileImageURL]
-                )
+                switch result {
+                case .success(let userResult):
+                    let profileImageURL = userResult.profileImage.small
+                    self.avatarURL = profileImageURL
+                    completion(.success(profileImageURL))
+                    
+                    NotificationCenter.default.post(
+                        name: ProfileImageService.didChangeNotification,
+                        object: self,
+                        userInfo: ["URL": profileImageURL]
+                    )
+                    
+                case .failure(let error):
+                    print("[ProfileImageService]: Error - \(error.localizedDescription) для пользователя \(username)")
+                    self.lastUsername = nil
+                    completion(.failure(error))
+                }
                 
-            case .failure(let error):
-                print("[ProfileImageService]: Error - \(error.localizedDescription) для пользователя \(username)")
-                self.lastUsername = nil
-                completion(.failure(error))
+                self.task = nil
             }
-            
-            self.task = nil
         }
-        
-        self.task = task
-        task.resume()
-        
+            
+            self.task = task
+            task.resume()
     }
     
+    func clearAvatarData() {
+        avatarURL = nil
+        task?.cancel()
+        lastUsername = nil
+    }
+    
+    // MARK: - Private Methods
     private func makeRequest(username: String, token: String) -> URLRequest? {
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else { return nil }
         var request = URLRequest(url: url)

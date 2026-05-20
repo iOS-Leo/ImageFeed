@@ -1,7 +1,25 @@
 import UIKit
 import Kingfisher
+
+protocol ImagesListCellDelegate: AnyObject {
+    func imageListCellDidTapLike(_ cell: ImagesListCell)
+}
+
 final class ImagesListCell: UITableViewCell {
+    // MARK: - Constants
     static let reuseIdentifier = "ImagesListCell"
+    
+    // MARK: - Properties
+    weak var delegate: ImagesListCellDelegate?
+    private var animationLayers = Set<CALayer>()
+    
+    enum FeedCellImageState {
+        case loading
+        case error
+        case finished(UIImage)
+    }
+    
+    // MARK: - Outlets
     private let cellImage: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -26,15 +44,89 @@ final class ImagesListCell: UITableViewCell {
         return button
     }()
     
+    // MARK: - Lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
     }
     
-    @available(*, unavailable)
-        required init?(coder: NSCoder) {
-            return nil
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
+        removeCellShimmers()
+        cellImage.image = nil
+        dateLabel.text = nil
+        
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        animationLayers.forEach { gradient in
+            gradient.frame = cellImage.bounds
         }
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        return nil
+    }
+    
+    // MARK: - Actions
+    @objc private func likeButtonClicked() {
+        delegate?.imageListCellDidTapLike(self)
+    }
+    
+    // MARK: - Public Methods
+    
+    
+    func setIsLiked(_ isLiked: Bool) {
+        let likeImageName = isLiked ? "likeEnable" : "likeDisable"
+        likeButton.setImage(UIImage(named: likeImageName), for: .normal)
+    }
+    
+    func configCell(
+        with textureURLString: String,
+        date: String,
+        isLiked: Bool,
+        completion: @escaping (Result<RetrieveImageResult, KingfisherError>) -> Void
+    ) {
+        dateLabel.text = date
+        setIsLiked(isLiked)
+        
+        let placeholder = UIImage(named: "Stub")
+        
+        guard let url = URL(string: textureURLString) else { return }
+        
+        cellImage.kf.indicatorType = .none
+        render(state: .loading)
+        
+        cellImage.kf.setImage(with: url, placeholder: placeholder) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let value):
+                self.render(state: .finished(value.image))
+            case .failure(_):
+                self.render(state: .error)
+            }
+            completion(result)
+        }
+    }
+    
+    // MARK: - Private Methods
+    private func render(state: FeedCellImageState) {
+        switch state {
+        case .loading:
+            startCellShimmer()
+            cellImage.image = nil
+        case .error:
+            removeCellShimmers()
+            cellImage.image = UIImage(named: "Stub")
+        case .finished(let image):
+            removeCellShimmers()
+            cellImage.image = image
+        }
+    }
     
     private func setupUI() {
         selectionStyle = .none
@@ -43,9 +135,9 @@ final class ImagesListCell: UITableViewCell {
         contentView.addSubview(cellImage)
         cellImage.addSubview(dateLabel)
         contentView.addSubview(likeButton)
+        likeButton.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            // Картинка
             cellImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
             cellImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
             cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -61,13 +153,22 @@ final class ImagesListCell: UITableViewCell {
         ])
     }
     
-    func configCell(with image: UIImage?, date: String, isLiked: Bool) {
-        cellImage.image = image
-        dateLabel.text = date
+    private func startCellShimmer() {
+        cellImage.layer.masksToBounds = true
         
-        let likeImageName = isLiked ? "likeEnable" : "likeDisable"
-        likeButton.setImage(UIImage(named: likeImageName), for: .normal)
+        let gradient = ShimmerAnimationHelper.shared.createGradient(for: cellImage, cornerRadius: 16)
+        
+        animationLayers.insert(gradient)
+        cellImage.layer.addSublayer(gradient)
     }
     
+    private func removeCellShimmers() {
+        animationLayers.forEach { gradient in
+            gradient.removeAnimation(forKey: "locationsChange")
+            gradient.removeFromSuperlayer()
+        }
+        animationLayers.removeAll()
+    }
 }
+
 
