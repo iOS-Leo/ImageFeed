@@ -42,6 +42,9 @@ final class AuthViewController: UIViewController {
     // MARK: - Actions
     @objc private func didTapLoginButton() {
         let webViewViewController = WebViewViewController()
+        let webViewPresenter = WebViewPresenter()
+        webViewViewController.presenter = webViewPresenter
+        webViewPresenter.view = webViewViewController
         webViewViewController.delegate = self
         webViewViewController.modalPresentationStyle = .fullScreen
         present(webViewViewController, animated: true)
