@@ -4,10 +4,17 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let imagesListViewController = ImagesListViewController()
+        let imagesListPresenter = ImagesListPresenter()
+        
+        
+        imagesListViewController.presenter = imagesListPresenter
+        imagesListPresenter.view = imagesListViewController
+        
         tabBar.backgroundColor = .ypBlackIOS
         tabBar.tintColor = .ypWhiteIOS
         
-        let imagesListViewController = ImagesListViewController()
+        
         imagesListViewController.tabBarItem = UITabBarItem(
             title: nil,
             image: UIImage(named: "tab_editorial_active"),

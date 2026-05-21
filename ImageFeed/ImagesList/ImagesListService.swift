@@ -11,6 +11,7 @@ import UIKit
 protocol ImagesListServiceProtocol {
     func fetchPhotosNextPage()
     var photos: [ImagesListService.Photo] { get }
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 
