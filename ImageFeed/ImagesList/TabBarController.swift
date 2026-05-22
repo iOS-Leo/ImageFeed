@@ -7,9 +7,7 @@ final class TabBarController: UITabBarController {
         let imagesListViewController = ImagesListViewController()
         let imagesListPresenter = ImagesListPresenter()
         
-        
-        imagesListViewController.presenter = imagesListPresenter
-        imagesListPresenter.view = imagesListViewController
+        imagesListViewController.configure(imagesListPresenter)
         
         tabBar.backgroundColor = .ypBlackIOS
         tabBar.tintColor = .ypWhiteIOS
@@ -22,6 +20,10 @@ final class TabBarController: UITabBarController {
         )
         
         let profileViewController = ProfileViewController()
+        
+        let profilePresenter = ProfilePresenter(view: profileViewController)
+        profileViewController.configure(profilePresenter)
+        
         profileViewController.tabBarItem = UITabBarItem(
             title: nil,
             image: UIImage(named: "tab_profile_active"),

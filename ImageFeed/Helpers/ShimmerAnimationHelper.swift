@@ -12,6 +12,8 @@ final class ShimmerAnimationHelper {
     
     private init() {}
     
+    private var shimmerLayers: [UIView: CALayer] = [:]
+    
     func createGradient(for view: UIView, cornerRadius: CGFloat) -> CAGradientLayer {
         let gradient = CAGradientLayer()
         gradient.frame = view.bounds
@@ -35,4 +37,23 @@ final class ShimmerAnimationHelper {
         
         return gradient
     }
+    
+    func addShimmer(to view: UIView, cornerRadius: CGFloat) {
+            // Сначала удалим старый, если был
+            removeShimmer(from: view)
+            
+            let gradient = createGradient(for: view, cornerRadius: cornerRadius)
+            view.layer.addSublayer(gradient)
+            shimmerLayers[view] = gradient
+        }
+    func removeShimmer(from view: UIView) {
+            if let layer = shimmerLayers[view] {
+                layer.removeFromSuperlayer()
+                shimmerLayers.removeValue(forKey: view)
+            }
+        }
+    
+    func removeShimmers(from views: [UIView]) {
+            views.forEach { removeShimmer(from: $0) }
+        }
 }

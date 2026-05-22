@@ -1,5 +1,3 @@
-
-
 import XCTest
 @testable import ImageFeed
 
@@ -19,19 +17,53 @@ final class ImagesListPresenterSpy: ImagesListPresenterProtocol {
 final class ImagesListViewControllerSpy: ImagesListViewControllerProtocol {
     var updateTableViewAnimatedCalled = false
     var showLikeErrorCalled = false
+    var updatedLikeIndexPath: IndexPath?
+    var updatedLikeStatus: Bool?
     
-    func updateTableViewAnimated(oldCount: Int, newCount: Int) { updateTableViewAnimatedCalled = true }
-    func updateLike(at indexPath: IndexPath, isLiked: Bool) {}
-    func showLikeError() { showLikeErrorCalled = true }
+    func updateTableViewAnimated(oldCount: Int, newCount: Int) {
+        updateTableViewAnimatedCalled = true
+    }
+    
+    func updateLike(at indexPath: IndexPath, isLiked: Bool) {
+        updatedLikeIndexPath = indexPath
+        updatedLikeStatus = isLiked
+    }
+    
+    func showLikeError() {
+        showLikeErrorCalled = true
+    }
+}
+
+final class ImagesListServiceErrorMock: ImagesListServiceProtocol {
+    var photos: [ImagesListService.Photo] = []
+    
+    func fetchPhotosNextPage() {}
+    
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+        completion(.failure(NSError(domain: "Test", code: 0, userInfo: nil)))
+    }
 }
 
 final class ImagesListServiceStub: ImagesListServiceProtocol {
     var photos: [ImagesListService.Photo] = []
+    
     func fetchPhotosNextPage() {}
+    
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
         completion(.success(()))
     }
 }
+
+final class ImagesListServiceSuccessMock: ImagesListServiceProtocol {
+    var photos: [ImagesListService.Photo] = []
+    
+    func fetchPhotosNextPage() {}
+    
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+        completion(.success(()))
+    }
+}
+
 
 final class ImagesListTests: XCTestCase {
     
@@ -47,18 +79,24 @@ final class ImagesListTests: XCTestCase {
     
     func testPresenterCallsUpdateTableView() {
         let viewSpy = ImagesListViewControllerSpy()
-        let presenter = ImagesListPresenter(service: ImagesListServiceStub())
+        let serviceStub = ImagesListServiceStub()
+        let presenter = ImagesListPresenter(service: serviceStub)
         presenter.view = viewSpy
+        
         
         presenter.didUpdatePhotos()
         
         XCTAssertTrue(viewSpy.updateTableViewAnimatedCalled)
     }
     
-    func testShowLikeError() {
+    func testPresenterShowsErrorOnLikeFailure() {
         let viewSpy = ImagesListViewControllerSpy()
-        viewSpy.showLikeError()
+        let errorServiceMock = ImagesListServiceErrorMock()
+        let presenter = ImagesListPresenter(service: errorServiceMock)
+        presenter.view = viewSpy
         
-        XCTAssertTrue(viewSpy.showLikeErrorCalled)
+        presenter.changeLike(photoId: "123", isLiked: false, indexPath: IndexPath(row: 0, section: 0))
+        
+        XCTAssertTrue(viewSpy.showLikeErrorCalled, "Презентер должен показать ошибку при неудачном лайке")
     }
 }

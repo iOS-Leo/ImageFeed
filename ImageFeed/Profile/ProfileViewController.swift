@@ -4,9 +4,7 @@ import Kingfisher
 final class ProfileViewController: UIViewController {
     
     // MARK: - Properties
-    private var profileImageServiceObserver: NSObjectProtocol?
-    private let profileService = ProfileService.shared
-    private var animationLayers = Set<CALayer>()
+    private var presenter: ProfilePresenterProtocol?
     
     // MARK: - UI Elements
     private lazy var avatarImageView: UIImageView = {
@@ -46,7 +44,7 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
-    private lazy var logoutButton: UIButton = {
+    lazy var logoutButton: UIButton = {
         let button = UIButton(type: .system)
         let image = UIImage(named: "ExitButton")
         button.tintColor = .ypRedIOS
@@ -65,57 +63,25 @@ final class ProfileViewController: UIViewController {
         setupView()
         setupConstraints()
         
-        checkProfileStatus()
-        setupNotificationObserver()
+        guard let presenter = presenter else {
+            assertionFailure("ProfileViewController: Presenter is not configured!")
+            return
+        }
+        presenter.viewDidLoad()
     }
     
-    deinit {
-        if let observer = profileImageServiceObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
+    func configure(_ presenter: ProfilePresenterProtocol) {
+        self.presenter = presenter
     }
+    
+    
     
     // MARK: - Actions
     @objc private func logoutTapped() {
-        let alert = UIAlertController(
-            title: "Пока, пока!",
-            message: "Уверен, что хочешь выйти?",
-            preferredStyle: .alert
-        )
-        
-        let yesAction = UIAlertAction(title: "Да", style: .destructive) { _ in
-            ProfileLogoutService.shared.logout()
-        }
-        
-        let noAction = UIAlertAction(title: "Нет", style: .cancel)
-        
-        alert.addAction(yesAction)
-        alert.addAction(noAction)
-        
-        present(alert, animated: true)
+        presenter?.didTapLogoutButton()
     }
     
     // MARK: - Private Methods
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        avatarImageView.kf.setImage(
-            with: url,
-            placeholder: UIImage(named: "photoProfile"),
-            options: [
-                .processor(RoundCornerImageProcessor(cornerRadius: 35)),
-            ]
-        )
-    }
-    
-    private func updateProfileDetails(profile: ProfileService.Profile) {
-        removeProfileShimmers()
-        nameLabel.text = profile.name
-        loginNameLabel.text = profile.loginName
-        descriptionLabel.text = profile.bio
-    }
     
     private func setupView() {
         view.addSubview(avatarImageView)
@@ -153,47 +119,58 @@ final class ProfileViewController: UIViewController {
         ])
         
     }
+}
+
+extension ProfileViewController: ProfileViewOutput {
     
-    private func checkProfileStatus() {
-        if let profile = profileService.profile {
-            updateProfileDetails(profile: profile)
-        } else {
-            startProfileShimmers()
-        }
-        updateAvatar()
-    }
-    
-    private func setupNotificationObserver() {
-        profileImageServiceObserver = NotificationCenter.default.addObserver(
-            forName: ProfileImageService.didChangeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self = self else { return }
-            self.removeProfileShimmers()
-            self.updateAvatar()
-        }
-    }
-    
-    private func startProfileShimmers() {
-        setupGradient(for: avatarImageView, size: CGSize(width: 70, height: 70), cornerRadius: 35)
-        setupGradient(for: nameLabel, size: CGSize(width: 223, height: 23), cornerRadius: 11.5)
-        setupGradient(for: loginNameLabel, size: CGSize(width: 89, height: 13), cornerRadius: 6.5)
-        setupGradient(for: descriptionLabel, size: CGSize(width: 67, height: 13), cornerRadius: 6.5)
-    }
-    
-    private func setupGradient(for view: UIView, size: CGSize, cornerRadius: CGFloat) {
-        let gradient = ShimmerAnimationHelper.shared.createGradient(for: view, cornerRadius: cornerRadius)
+    func showProfile(name: String, login: String, bio: String, avatarURL: URL?) {
+        hideLoading()
         
-        animationLayers.insert(gradient)
-        view.layer.addSublayer(gradient)
+        nameLabel.text = name
+        loginNameLabel.text = login
+        descriptionLabel.text = bio
+        
+        if let url = avatarURL {
+            avatarImageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "photoProfile"),
+                options: [.processor(RoundCornerImageProcessor(cornerRadius: 35))]
+            )
+        } else {
+            avatarImageView.image = UIImage(named: "photoProfile")
+        }
     }
     
-    private func removeProfileShimmers() {
-        animationLayers.forEach { gradient in
-            gradient.removeAnimation(forKey: "locationsChange")
-            gradient.removeFromSuperlayer()
+    func showLoading() {
+        ShimmerAnimationHelper.shared.addShimmer(to: avatarImageView, cornerRadius: 35)
+        ShimmerAnimationHelper.shared.addShimmer(to: nameLabel, cornerRadius: 11.5)
+        ShimmerAnimationHelper.shared.addShimmer(to: loginNameLabel, cornerRadius: 6.5)
+        ShimmerAnimationHelper.shared.addShimmer(to: descriptionLabel, cornerRadius: 6.5)
+    }
+    
+    func hideLoading() {
+        ShimmerAnimationHelper.shared.removeShimmers(from: [
+            avatarImageView, nameLabel, loginNameLabel, descriptionLabel
+        ])
+    }
+    
+    func presentLogoutAlert() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверен, что хочешь выйти?",
+            preferredStyle: .alert
+        )
+        
+        let yesAction = UIAlertAction(title: "Да", style: .destructive) { [weak self] _ in
+            self?.presenter?.confirmLogout()
         }
-        animationLayers.removeAll()
+        
+        let noAction = UIAlertAction(title: "Нет", style: .cancel)
+        
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        
+        present(alert, animated: true)
     }
 }
+
