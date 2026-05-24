@@ -2,12 +2,6 @@
 import UIKit
 import Kingfisher
 
-protocol ImagesListViewControllerProtocol: AnyObject {
-    func updateTableViewAnimated(oldCount: Int, newCount: Int)
-    func updateLike(at indexPath: IndexPath, isLiked: Bool)
-    func showLikeError()
-}
-
 final class ImagesListViewController: UIViewController {
     
     var presenter: ImagesListPresenterProtocol?

@@ -1,6 +1,6 @@
 import Foundation
 
-final class ProfileImageService {
+final class ProfileImageService: ProfileImageServiceProtocol {
     
     // MARK: - Constants
     static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange")

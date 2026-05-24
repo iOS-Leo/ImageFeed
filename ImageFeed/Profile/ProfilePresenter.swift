@@ -7,34 +7,6 @@
 
 import Foundation
 
-protocol ProfilePresenterProtocol: AnyObject {
-    func viewDidLoad()
-    func didTapLogoutButton()
-    func confirmLogout() 
-}
-
-protocol ProfileViewOutput: AnyObject {
-    func showProfile(name: String, login: String, bio: String, avatarURL: URL?)
-    func showLoading()
-    func hideLoading()
-    func presentLogoutAlert()
-}
-
-protocol ProfileServiceProtocol {
-    var profile: ProfileService.Profile? { get }
-}
-extension ProfileService: ProfileServiceProtocol {}
-
-protocol LogoutServiceProtocol {
-    func logout()
-}
-extension ProfileLogoutService: LogoutServiceProtocol {}
-
-protocol ProfileImageServiceProtocol {
-    var avatarURL: String? { get }
-}
-extension ProfileImageService: ProfileImageServiceProtocol {}
-
 final class ProfilePresenter: ProfilePresenterProtocol {
     
     weak var view: ProfileViewOutput?
@@ -83,7 +55,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
         }
     }
     
-    private func updateView(with profile: ProfileService.Profile) {
+    private func updateView(with profile: Profile) {
         let avatarURL = imageService.avatarURL.flatMap { URL(string: $0) }
         view?.showProfile(
             name: profile.name,

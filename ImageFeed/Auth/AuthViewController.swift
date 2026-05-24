@@ -1,10 +1,6 @@
 import UIKit
 import ProgressHUD
 
-protocol AuthViewControllerDelegate: AnyObject {
-    func didAuthenticate(_ vc: AuthViewController)
-}
-
 final class AuthViewController: UIViewController {
     
     // MARK: - Properties

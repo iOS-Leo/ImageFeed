@@ -1,10 +1,6 @@
 import UIKit
 import Kingfisher
 
-protocol ImagesListCellDelegate: AnyObject {
-    func imageListCellDidTapLike(_ cell: ImagesListCell)
-}
-
 final class ImagesListCell: UITableViewCell {
     // MARK: - Constants
     static let reuseIdentifier = "ImagesListCell"

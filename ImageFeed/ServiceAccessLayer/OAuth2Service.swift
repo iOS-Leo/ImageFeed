@@ -1,30 +1,6 @@
 import Foundation
 
-enum NetworkError: Error {
-    case httpStatusCode(Int)
-    case urlRequestError(Error)
-    case urlSessionError
-    case invalidRequest
-    case decodingError(Error)
-}
 
-struct OAuthTokenResponse: Decodable {
-    let accessToken: String
-    let tokenType: String
-    let scope: String
-    let createdAt: Int
-    
-    enum CodingKeys: String, CodingKey {
-        case accessToken = "access_token"
-        case tokenType = "token_type"
-        case scope = "scope"
-        case createdAt = "created_at"
-    }
-}
-
-enum AuthServiceError: Error {
-    case invalidRequest
-}
 
 final class OAuth2Service {
     static let shared = OAuth2Service()

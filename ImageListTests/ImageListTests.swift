@@ -4,7 +4,7 @@ import XCTest
 
 final class ImagesListPresenterSpy: ImagesListPresenterProtocol {
     var view: ImagesListViewControllerProtocol?
-    var photos: [ImagesListService.Photo] = []
+    var photos: [Photo] = []
     
     var viewDidLoadCalled = false
     var fetchPhotosNextPageCalled = false
@@ -35,7 +35,7 @@ final class ImagesListViewControllerSpy: ImagesListViewControllerProtocol {
 }
 
 final class ImagesListServiceErrorMock: ImagesListServiceProtocol {
-    var photos: [ImagesListService.Photo] = []
+    var photos: [Photo] = []
     
     func fetchPhotosNextPage() {}
     
@@ -45,7 +45,7 @@ final class ImagesListServiceErrorMock: ImagesListServiceProtocol {
 }
 
 final class ImagesListServiceStub: ImagesListServiceProtocol {
-    var photos: [ImagesListService.Photo] = []
+    var photos: [Photo] = []
     
     func fetchPhotosNextPage() {}
     
@@ -55,7 +55,7 @@ final class ImagesListServiceStub: ImagesListServiceProtocol {
 }
 
 final class ImagesListServiceSuccessMock: ImagesListServiceProtocol {
-    var photos: [ImagesListService.Photo] = []
+    var photos: [Photo] = []
     
     func fetchPhotosNextPage() {}
     

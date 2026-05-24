@@ -7,17 +7,9 @@
 
 import Foundation
 
-protocol ImagesListPresenterProtocol: AnyObject {
-    var view: ImagesListViewControllerProtocol? { get set }
-    var photos: [ImagesListService.Photo] { get }
-    func viewDidLoad()
-    func fetchPhotosNextPage()
-    func changeLike(photoId: String, isLiked: Bool, indexPath: IndexPath)
-}
-
 final class ImagesListPresenter: ImagesListPresenterProtocol {
     weak var view: ImagesListViewControllerProtocol?
-    private(set) var photos: [ImagesListService.Photo] = []
+    private(set) var photos: [Photo] = []
     private var imagesListServiceObserver: NSObjectProtocol?
     
     private let imagesListService: ImagesListServiceProtocol

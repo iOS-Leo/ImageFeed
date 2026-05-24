@@ -1,18 +1,6 @@
 import UIKit
 import WebKit
 
-protocol WebViewViewControllerDelegate: AnyObject {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController)
-}
-
-public protocol WebViewViewControllerProtocol: AnyObject {
-    var presenter: WebViewPresenterProtocol? { get set }
-    func load(request: URLRequest)
-    func setProgressValue(_ newValue: Float)
-    func setProgressHidden(_ isHidden: Bool)
-}
-
 final class WebViewViewController: UIViewController  & WebViewViewControllerProtocol {
     
     // MARK: - Properties

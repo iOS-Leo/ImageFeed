@@ -1,5 +1,5 @@
 import XCTest
-@testable import ImageFeed 
+@testable import ImageFeed
 
 final class ProfilePresenterSpy: ProfilePresenterProtocol {
     var viewDidLoadCalled = false
