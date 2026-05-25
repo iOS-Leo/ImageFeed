@@ -12,6 +12,7 @@ final class ImagesListViewController: UIViewController {
         table.backgroundColor = .ypBlackIOS
         table.separatorStyle = .none
         table.translatesAutoresizingMaskIntoConstraints = false
+        table.accessibilityIdentifier = "imagesTableView"
         return table
     }()
     

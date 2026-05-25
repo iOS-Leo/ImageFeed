@@ -53,6 +53,7 @@ final class ProfileViewController: UIViewController {
         button.contentVerticalAlignment = .fill
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(logoutTapped), for: .touchUpInside)
+        button.accessibilityIdentifier = "logout button"
         return button
     }()
     
