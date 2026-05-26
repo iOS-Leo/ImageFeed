@@ -39,16 +39,16 @@ final class WebViewViewControllerSpy: WebViewViewControllerProtocol {
 final class WebViewTests: XCTestCase {
     
     private let mockConfiguration = AuthConfiguration(
-            accessKey: "mock",
-            secretKey: "mock",
-            redirectURI: "mock",
-            accessScope: "mock",
-            authURLString: "https://unsplash.com/oauth/authorize",
-            defaultBaseURLString: "https://api.unsplash.com"
-        )
+        accessKey: "mock",
+        secretKey: "mock",
+        redirectURI: "mock",
+        accessScope: "mock",
+        authURLString: "https://unsplash.com/oauth/authorize",
+        defaultBaseURLString: "https://api.unsplash.com"
+    )
     
     func testViewControllerCallsViewDidLoad() {
-
+        
         let viewController = WebViewViewController()
         let presenter = WebViewPresenterSpy()
         
@@ -78,48 +78,66 @@ final class WebViewTests: XCTestCase {
     }
     
     func testProgressVisibleWhenLessThenOne() async throws {
-            try await MainActor.run {
-              
-                let authHelper = AuthHelper(configuration: mockConfiguration)
-                let presenter = WebViewPresenter(authHelper: authHelper)
-                let progress: Float = 0.6
-                
-                let shouldHideProgress = presenter.shouldHideProgress(for: progress)
-                
-                XCTAssertFalse(shouldHideProgress)
-            }
+        try await MainActor.run {
+            
+            let authHelper = AuthHelper(configuration: mockConfiguration)
+            let presenter = WebViewPresenter(authHelper: authHelper)
+            let progress: Float = 0.6
+            
+            let shouldHideProgress = presenter.shouldHideProgress(for: progress)
+            
+            XCTAssertFalse(shouldHideProgress)
         }
+    }
     
     func testProgressHiddenWhenOne() async throws {
-            try await MainActor.run {
-                
-                let authHelper = AuthHelper(configuration: mockConfiguration)
-                let presenter = WebViewPresenter(authHelper: authHelper)
-                let progress: Float = 1.0
-                
-                let shouldHideProgress = presenter.shouldHideProgress(for: progress)
-                
-                XCTAssertTrue(shouldHideProgress)
-            }
+        try await MainActor.run {
+            
+            let authHelper = AuthHelper(configuration: mockConfiguration)
+            let presenter = WebViewPresenter(authHelper: authHelper)
+            let progress: Float = 1.0
+            
+            let shouldHideProgress = presenter.shouldHideProgress(for: progress)
+            
+            XCTAssertTrue(shouldHideProgress)
         }
+    }
     
     func testAuthHelperAuthURL() async throws {
         try await MainActor.run {
-
+            
             let authHelper = AuthHelper(configuration: mockConfiguration)
             
             let url = authHelper.authURL()
-
+            
             guard let urlString = url?.absoluteString else {
                 XCTFail("Auth URL is nil")
                 return
             }
-
+            
             XCTAssertTrue(urlString.contains(mockConfiguration.authURLString))
             XCTAssertTrue(urlString.contains(mockConfiguration.accessKey))
             XCTAssertTrue(urlString.contains(mockConfiguration.redirectURI))
             XCTAssertTrue(urlString.contains("code"))
             XCTAssertTrue(urlString.contains(mockConfiguration.accessScope))
+        }
+    }
+    
+    func testCodeFromURL() async throws {
+        try await MainActor.run {
+            var urlComponents = URLComponents(string: "https://unsplash.com/oauth/authorize/native")!
+            urlComponents.queryItems = [URLQueryItem(name: "code", value: "test code")]
+            
+            guard let url = urlComponents.url else {
+                XCTFail("Не удалось создать URL из компонентов")
+                return
+            }
+            
+            let authHelper = AuthHelper()
+            
+            let code = authHelper.code(from: url)
+            
+            XCTAssertEqual(code, "test code", "Извлеченный код должен совпадать с исходным значением")
         }
     }
 }

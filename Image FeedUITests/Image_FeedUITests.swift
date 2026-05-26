@@ -26,7 +26,7 @@ class Image_FeedUITests: XCTestCase {
         
         let loginTextField = webView.descendants(matching: .textField).element
         XCTAssertTrue(loginTextField.waitForExistence(timeout: 5))
-        sleep(3)
+        XCTAssertTrue(loginTextField.isHittable)
         
         loginTextField.tap()
         
@@ -52,25 +52,23 @@ class Image_FeedUITests: XCTestCase {
     
     func testFeed() throws {
         let tablesQuery = app.tables
-        sleep(10)
         let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
+        XCTAssertTrue(cell.waitForExistence(timeout: 10))
         cell.swipeUp()
         
-        sleep(2)
+        XCTAssertTrue(cell.waitForExistence(timeout: 10))
         
         let cellToLike = tablesQuery.children(matching: .cell).element(boundBy: 1)
         
         cellToLike.buttons["like button off"].tap()
         cellToLike.buttons["like button on"].tap()
         
-        sleep(2)
+        XCTAssertTrue(cellToLike.buttons["like button on"].waitForExistence(timeout: 2))
         
         cellToLike.tap()
         
-        sleep(10)
-        
         let image = app.scrollViews.images.element(boundBy: 0)
-        sleep(10)
+        XCTAssertTrue(image.waitForExistence(timeout: 10))
         image.pinch(withScale: 3, velocity: 1)
         image.pinch(withScale: 0.5, velocity: -1)
         
@@ -79,7 +77,7 @@ class Image_FeedUITests: XCTestCase {
     }
     
     func testProfile() throws {
-        sleep(10)
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
         app.tabBars.buttons.element(boundBy: 1).tap()
         
         XCTAssertTrue(app.staticTexts[""].exists)
