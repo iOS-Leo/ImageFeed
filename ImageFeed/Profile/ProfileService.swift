@@ -1,6 +1,6 @@
 import Foundation
 
-final class ProfileService {
+final class ProfileService: ProfileServiceProtocol {
     
     // MARK: - Constants
     static let shared = ProfileService()
@@ -13,35 +13,6 @@ final class ProfileService {
     
     // MARK: - Init
     private init() {}
-    
-    // MARK: - Structs
-    struct ProfileResult: Codable {
-        let username: String
-        let firstName: String?
-        let lastName: String?
-        let bio: String?
-        
-        enum CodingKeys: String, CodingKey {
-            case username
-            case firstName = "first_name"
-            case lastName = "last_name"
-            case bio
-        }
-    }
-    
-    struct Profile {
-        let username: String
-        let name: String
-        let loginName: String
-        let bio: String?
-        
-        init(result: ProfileResult) {
-            self.username = result.username
-            self.name = "\(result.firstName ?? "") \(result.lastName ?? "")".trimmingCharacters(in: .whitespaces)
-            self.loginName = "@\(result.username)"
-            self.bio = result.bio
-        }
-    }
     
     // MARK: - Public Methods
     

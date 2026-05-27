@@ -45,6 +45,7 @@ final class SingleImageViewController: UIViewController {
         button.setImage(UIImage(named: "backButton"), for: .normal)
         button.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.accessibilityIdentifier = "nav back button white"
         return button
     }()
     

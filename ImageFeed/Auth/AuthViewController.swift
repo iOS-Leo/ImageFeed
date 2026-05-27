@@ -1,10 +1,6 @@
 import UIKit
 import ProgressHUD
 
-protocol AuthViewControllerDelegate: AnyObject {
-    func didAuthenticate(_ vc: AuthViewController)
-}
-
 final class AuthViewController: UIViewController {
     
     // MARK: - Properties
@@ -29,6 +25,7 @@ final class AuthViewController: UIViewController {
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.accessibilityIdentifier = "Authenticate"
         return button
     }()
     
@@ -42,6 +39,10 @@ final class AuthViewController: UIViewController {
     // MARK: - Actions
     @objc private func didTapLoginButton() {
         let webViewViewController = WebViewViewController()
+        let authHelper = AuthHelper()
+        let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+        webViewViewController.presenter = webViewPresenter
+        webViewPresenter.view = webViewViewController
         webViewViewController.delegate = self
         webViewViewController.modalPresentationStyle = .fullScreen
         present(webViewViewController, animated: true)

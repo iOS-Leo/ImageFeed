@@ -1,22 +1,19 @@
 import UIKit
 import WebKit
 
-protocol WebViewViewControllerDelegate: AnyObject {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController)
-}
-
-final class WebViewViewController: UIViewController {
+final class WebViewViewController: UIViewController  & WebViewViewControllerProtocol {
     
     // MARK: - Properties
     weak var delegate: WebViewViewControllerDelegate?
     private var estimatedProgressObservation: NSKeyValueObservation?
+    var presenter: WebViewPresenterProtocol?
     
     // MARK: - Outlets
     private lazy var webView: WKWebView = {
         let webView = WKWebView()
         webView.translatesAutoresizingMaskIntoConstraints = false
-        webView.backgroundColor = .ypWhiteIOS 
+        webView.backgroundColor = .ypWhiteIOS
+        webView.accessibilityIdentifier = "UnsplashWebView"
         return webView
     }()
     
@@ -38,7 +35,7 @@ final class WebViewViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadAuthView()
+        presenter?.viewDidLoad()
         webView.navigationDelegate = self
         setupUI()
         setupConstraints()
@@ -48,15 +45,30 @@ final class WebViewViewController: UIViewController {
              options: [],
              changeHandler: { [weak self] _, _ in
                  guard let self = self else { return }
-                 self.updateProgress()})
+                 self.presenter?.didUpdateProgressValue(self.webView.estimatedProgress)
+             })
     }
     
     // MARK: - Actions
     override func viewDidDisappear(_ animated: Bool) {
-            super.viewDidDisappear(animated)
-            estimatedProgressObservation = nil
-        }
-
+        super.viewDidDisappear(animated)
+        estimatedProgressObservation = nil
+    }
+    
+    // MARK: - Public Methods
+    
+    func load(request: URLRequest) {
+        webView.load(request)
+    }
+    
+    func setProgressValue(_ newValue: Float) {
+        progressView.progress = newValue
+    }
+    
+    func setProgressHidden(_ isHidden: Bool) {
+        progressView.isHidden = isHidden
+    }
+    
     // MARK: - Private Methods
     private func setupUI() {
         view.addSubview(webView)
@@ -85,34 +97,6 @@ final class WebViewViewController: UIViewController {
     @objc private func didTapBackButton() {
         delegate?.webViewViewControllerDidCancel(self)
     }
-    
-    private func updateProgress() {
-        progressView.progress = Float(webView.estimatedProgress)
-        progressView.isHidden = abs(webView.estimatedProgress - 1.0) <= 0.0001
-    }
-    
-    enum WebViewConstants {
-        static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-    }
-    
-    private func loadAuthView() {
-        guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-            return
-        }
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: Constants.accessKey),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-            URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "scope", value: Constants.accessScope)
-        ]
-        
-        guard let url = urlComponents.url else {
-            return
-        }
-        
-        let request = URLRequest(url: url)
-        webView.load(request)
-    }
 }
 
 // MARK: - WKNavigationDelegate
@@ -131,15 +115,11 @@ extension WebViewViewController: WKNavigationDelegate {
     }
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
-        if let url = navigationAction.request.url,
-           let urlComponents = URLComponents(string: url.absoluteString),
-           urlComponents.path == "/oauth/authorize/native",
-           let items = urlComponents.queryItems,
-           let codeItem = items.first(where: { $0.name == "code" })
-        {
-            return codeItem.value
-        } else {
-            return nil
+        if let url = navigationAction.request.url {
+            return presenter?.code(from: url)
         }
+        return nil
     }
 }
+
+

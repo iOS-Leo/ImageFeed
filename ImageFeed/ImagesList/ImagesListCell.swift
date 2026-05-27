@@ -1,10 +1,6 @@
 import UIKit
 import Kingfisher
 
-protocol ImagesListCellDelegate: AnyObject {
-    func imageListCellDidTapLike(_ cell: ImagesListCell)
-}
-
 final class ImagesListCell: UITableViewCell {
     // MARK: - Constants
     static let reuseIdentifier = "ImagesListCell"
@@ -82,6 +78,8 @@ final class ImagesListCell: UITableViewCell {
     func setIsLiked(_ isLiked: Bool) {
         let likeImageName = isLiked ? "likeEnable" : "likeDisable"
         likeButton.setImage(UIImage(named: likeImageName), for: .normal)
+        
+        likeButton.accessibilityIdentifier = isLiked ? "like button on" : "like button off"
     }
     
     func configCell(
